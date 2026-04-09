@@ -1,0 +1,21 @@
+node_modules
+dist
+dist-ssr
+*.local
+*.tsbuildinfo
+coverage
+
+# Editor
+.vscode
+.idea
+*.swp
+.DS_Store
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Nix
+result
+.direnv
