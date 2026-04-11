@@ -4,19 +4,20 @@ import { Modal } from './Modal';
 
 type Props = Readonly<{
   players: ReadonlyArray<Player>;
-  onConfirm: (tenpai: ReadonlyArray<PlayerId>) => void;
+  onConfirm: (riichiPlayers: ReadonlyArray<PlayerId>) => void;
   onCancel: () => void;
 }>;
 
 /**
- * 流局入力ダイアログ。各プレイヤーごとにテンパイ/不テンパイを
- * チェックボックス感覚でトグルして、確定時に ScoreMovement に変換する。
+ * リーチ宣言入力ダイアログ。
+ * 流局ダイアログと同様にプレイヤーをトグル選択し、
+ * 確定時にまとめて riichi イベントを発行する。
  */
-export const RyukyokuDialog = ({ players, onConfirm, onCancel }: Props) => {
-  const [tenpaiSet, setTenpaiSet] = useState<ReadonlySet<PlayerId>>(new Set());
+export const RiichiDialog = ({ players, onConfirm, onCancel }: Props) => {
+  const [selected, setSelected] = useState<ReadonlySet<PlayerId>>(new Set());
 
   const toggle = (id: PlayerId) => {
-    setTenpaiSet((prev) => {
+    setSelected((prev) => {
       const next = new Set(prev);
       if (next.has(id)) {
         next.delete(id);
@@ -27,39 +28,43 @@ export const RyukyokuDialog = ({ players, onConfirm, onCancel }: Props) => {
     });
   };
 
+  const canConfirm = selected.size > 0;
+
   const handleConfirm = () => {
-    onConfirm(players.map((p) => p.id).filter((id) => tenpaiSet.has(id)));
+    if (!canConfirm) return;
+    onConfirm(players.map((p) => p.id).filter((id) => selected.has(id)));
   };
 
   return (
-    <Modal title="流局" onCancel={onCancel} onConfirm={handleConfirm}>
+    <Modal
+      title="リーチ"
+      onCancel={onCancel}
+      onConfirm={handleConfirm}
+      confirmDisabled={!canConfirm}
+    >
       <div className="space-y-6">
         <p className="text-2xl text-neutral-400">
-          テンパイしているプレイヤーを選択してください
+          リーチ宣言するプレイヤー���選択してください
         </p>
         <div className="grid grid-cols-2 gap-4">
           {players.map((player) => {
-            const isTenpai = tenpaiSet.has(player.id);
+            const isSelected = selected.has(player.id);
             return (
               <button
                 key={player.id}
                 type="button"
                 onClick={() => toggle(player.id)}
                 className={`flex items-center justify-between rounded-xl px-6 py-6 text-3xl font-bold transition ${
-                  isTenpai
+                  isSelected
                     ? 'bg-sky-600 text-white ring-4 ring-sky-300'
                     : 'bg-neutral-800 text-neutral-300 hover:bg-neutral-700'
                 }`}
               >
                 <span className="truncate">{player.name}</span>
-                <span className="ml-4 text-2xl">
-                  {isTenpai ? 'テンパイ' : 'ノーテン'}
-                </span>
               </button>
             );
           })}
         </div>
-
       </div>
     </Modal>
   );

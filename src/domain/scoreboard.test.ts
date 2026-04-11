@@ -159,6 +159,83 @@ describe('apply: ryukyoku', () => {
   });
 });
 
+describe('apply: riichi', () => {
+  it('リーチ宣言者から 1000 点が卓に移動する', () => {
+    const result = apply(initial, { kind: 'riichi', players: ['p1'] });
+    expect(result.scores.p1).toBe(25000 - 1000);
+    expect(result.riichiStickCount).toBe(1);
+  });
+
+  it('複数人同時リーチで人数分の供託が積まれる', () => {
+    const result = apply(initial, { kind: 'riichi', players: ['p1', 'p2'] });
+    expect(result.scores.p1).toBe(25000 - 1000);
+    expect(result.scores.p2).toBe(25000 - 1000);
+    expect(result.riichiStickCount).toBe(2);
+  });
+});
+
+describe('供託回収', () => {
+  const boardWithSticks = apply(initial, {
+    kind: 'riichi',
+    players: ['p1', 'p2'],
+  });
+
+  it('ロン時に和了者が卓の供託を全回収する', () => {
+    const result = apply(boardWithSticks, {
+      kind: 'ron',
+      winner: 'p3',
+      loser: 'p4',
+      amount: 8000,
+    });
+    // p3: +8000 (ロン) +2000 (供託2本)
+    expect(result.scores.p3).toBe(25000 + 8000 + 2000);
+    expect(result.scores.p4).toBe(25000 - 8000);
+    expect(result.riichiStickCount).toBe(0);
+  });
+
+  it('子ツモ時に和了者が卓の供託を全回収する', () => {
+    const result = apply(boardWithSticks, {
+      kind: 'tsumo-ko',
+      winner: 'p3',
+      dealer: 'p4',
+      total: 8000,
+    });
+    // p3: +8000 (ツモ) +2000 (供託2本)
+    expect(result.scores.p3).toBe(25000 + 8000 + 2000);
+    expect(result.riichiStickCount).toBe(0);
+  });
+
+  it('親ツモ時に和了者が卓の供託を全回収する', () => {
+    const result = apply(boardWithSticks, {
+      kind: 'tsumo-oya',
+      winner: 'p3',
+      total: 12000,
+    });
+    // p3: +12000 (4000×3) +2000 (供託2本)
+    expect(result.scores.p3).toBe(25000 + 4000 * 3 + 2000);
+    expect(result.riichiStickCount).toBe(0);
+  });
+
+  it('流局時は供託が卓に残る', () => {
+    const result = apply(boardWithSticks, {
+      kind: 'ryukyoku',
+      tenpai: ['p3'],
+    });
+    expect(result.riichiStickCount).toBe(2);
+  });
+
+  it('供託 0 本の和了では供託ボーナスが 0', () => {
+    const result = apply(initial, {
+      kind: 'ron',
+      winner: 'p1',
+      loser: 'p2',
+      amount: 8000,
+    });
+    expect(result.scores.p1).toBe(25000 + 8000);
+    expect(result.riichiStickCount).toBe(0);
+  });
+});
+
 describe('replay', () => {
   it('空履歴なら初期状態と一致する', () => {
     expect(replay(initial, [])).toEqual(initial);

@@ -22,6 +22,7 @@ export type ScoreMap = Readonly<Record<PlayerId, Points>>;
 export type Scoreboard = Readonly<{
   players: ReadonlyArray<Player>;
   scores: ScoreMap;
+  riichiStickCount: number;
 }>;
 
 export const createInitialScoreboard = (
@@ -34,6 +35,7 @@ export const createInitialScoreboard = (
     p3: INITIAL_POINTS,
     p4: INITIAL_POINTS,
   },
+  riichiStickCount: 0,
 });
 
 /** スコアマップに delta を加算した新しいマップを返す。 */
@@ -64,21 +66,25 @@ export const apply = (
   movement: ScoreMovement,
 ): Scoreboard => {
   switch (movement.kind) {
-    case 'ron':
+    case 'ron': {
+      const riichiBonus = board.riichiStickCount * 1000;
       return {
         ...board,
         scores: addScores(board.scores, [
-          [movement.winner, movement.amount],
+          [movement.winner, movement.amount + riichiBonus],
           [movement.loser, -movement.amount],
         ]),
+        riichiStickCount: 0,
       };
+    }
 
     case 'tsumo-ko': {
       const { fromOya, fromKo } = calcTsumoKoDistribution(movement.total);
       const koPayers = PLAYER_IDS.filter(
         (id) => id !== movement.winner && id !== movement.dealer,
       );
-      const gained = fromOya + fromKo * koPayers.length;
+      const riichiBonus = board.riichiStickCount * 1000;
+      const gained = fromOya + fromKo * koPayers.length + riichiBonus;
       return {
         ...board,
         scores: addScores(board.scores, [
@@ -86,19 +92,22 @@ export const apply = (
           [movement.dealer, -fromOya],
           ...koPayers.map((id) => [id, -fromKo] as const),
         ]),
+        riichiStickCount: 0,
       };
     }
 
     case 'tsumo-oya': {
       const { fromKo } = calcTsumoOyaDistribution(movement.total);
       const koPayers = PLAYER_IDS.filter((id) => id !== movement.winner);
-      const gained = fromKo * koPayers.length;
+      const riichiBonus = board.riichiStickCount * 1000;
+      const gained = fromKo * koPayers.length + riichiBonus;
       return {
         ...board,
         scores: addScores(board.scores, [
           [movement.winner, gained],
           ...koPayers.map((id) => [id, -fromKo] as const),
         ]),
+        riichiStickCount: 0,
       };
     }
 
@@ -117,6 +126,16 @@ export const apply = (
       return {
         ...board,
         scores: addScores(board.scores, deltas),
+      };
+    }
+
+    case 'riichi': {
+      const deltas: ReadonlyArray<readonly [PlayerId, Points]> =
+        movement.players.map((id) => [id, -1000] as const);
+      return {
+        ...board,
+        scores: addScores(board.scores, deltas),
+        riichiStickCount: board.riichiStickCount + movement.players.length,
       };
     }
   }

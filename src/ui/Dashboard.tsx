@@ -7,6 +7,7 @@ import { PlayerCard } from './PlayerCard';
 import { RonDialog } from './dialogs/RonDialog';
 import { TsumoDialog } from './dialogs/TsumoDialog';
 import { RyukyokuDialog } from './dialogs/RyukyokuDialog';
+import { RiichiDialog } from './dialogs/RiichiDialog';
 import { ResetDialog } from './dialogs/ResetDialog';
 
 type Props = Readonly<{
@@ -14,7 +15,7 @@ type Props = Readonly<{
   onReset: () => void;
 }>;
 
-type DialogKind = 'ron' | 'tsumo' | 'ryukyoku' | 'reset' | null;
+type DialogKind = 'ron' | 'tsumo' | 'ryukyoku' | 'riichi' | 'reset' | null;
 
 type RankedPlayer = Readonly<{
   player: Player;
@@ -78,6 +79,7 @@ export const Dashboard = ({ players, onReset }: Props) => {
         onRon={() => setDialog('ron')}
         onTsumo={() => setDialog('tsumo')}
         onRyukyoku={() => setDialog('ryukyoku')}
+        onRiichi={() => setDialog('riichi')}
         onUndo={undo}
         onReset={() => setDialog('reset')}
       />
@@ -105,6 +107,15 @@ export const Dashboard = ({ players, onReset }: Props) => {
           onCancel={() => setDialog(null)}
         />
       )}
+      {dialog === 'riichi' && (
+        <RiichiDialog
+          players={players}
+          onConfirm={(riichiPlayers: ReadonlyArray<PlayerId>) =>
+            handleDispatch({ kind: 'riichi', players: riichiPlayers })
+          }
+          onCancel={() => setDialog(null)}
+        />
+      )}
       {dialog === 'reset' && (
         <ResetDialog
           onConfirm={handleConfirmReset}
@@ -120,6 +131,7 @@ type ActionBarProps = Readonly<{
   onRon: () => void;
   onTsumo: () => void;
   onRyukyoku: () => void;
+  onRiichi: () => void;
   onUndo: () => void;
   onReset: () => void;
 }>;
@@ -129,10 +141,12 @@ const ActionBar = ({
   onRon,
   onTsumo,
   onRyukyoku,
+  onRiichi,
   onUndo,
   onReset,
 }: ActionBarProps) => (
   <div className="mt-6 flex gap-4">
+    <ActionButton label="リーチ" onClick={onRiichi} variant="primary" />
     <ActionButton label="ロン" onClick={onRon} variant="primary" />
     <ActionButton label="ツモ" onClick={onTsumo} variant="primary" />
     <ActionButton label="流局" onClick={onRyukyoku} variant="primary" />

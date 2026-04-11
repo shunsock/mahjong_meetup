@@ -43,4 +43,8 @@ export type ScoreMovement =
   | Readonly<{
       kind: 'ryukyoku';
       tenpai: ReadonlyArray<PlayerId>;
+    }>
+  | Readonly<{
+      kind: 'riichi';
+      players: ReadonlyArray<PlayerId>;
     }>;
