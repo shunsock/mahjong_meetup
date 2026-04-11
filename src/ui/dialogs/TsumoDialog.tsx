@@ -87,7 +87,7 @@ export const TsumoDialog = ({ players, onConfirm, onCancel }: Props) => {
 
         {mode === 'ko' && (
           <PlayerSelector
-            label="親 (子ツモ時のみ)"
+            label="親プレイヤー"
             players={players}
             selected={dealer}
             onSelect={setDealer}

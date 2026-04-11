@@ -20,7 +20,7 @@ type Mode = 'ko' | 'oya';
 
 /**
  * ロン入力ダイアログ。
- * 和了者・放銃者・点数 (子/親のプリセット切替あり) を入力する。
+ * 和了者・放銃者・点数 (和了者が子/親かでプリセット切替) を入力する。
  * このアプリは親情報を持たないので、子/親はプリセットの数値を
  * 切り替えるための UI 上の便宜的な選択肢として扱う。
  */
@@ -63,10 +63,10 @@ export const RonDialog = ({ players, onConfirm, onCancel }: Props) => {
         />
 
         <div className="space-y-3">
-          <div className="text-2xl text-neutral-400">子 / 親</div>
+          <div className="text-2xl text-neutral-400">和了者</div>
           <div className="grid grid-cols-2 gap-3">
             <ModeButton
-              label="子 (非親)"
+              label="子"
               active={mode === 'ko'}
               onClick={() => setMode('ko')}
             />
