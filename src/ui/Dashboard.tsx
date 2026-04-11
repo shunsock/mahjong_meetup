@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import type { ReactNode } from 'react';
+import { RotateCcw, LogOut } from 'lucide-react';
 import type { Player, PlayerId } from '../domain/player';
 import type { Scoreboard } from '../domain/scoreboard';
 import type { ScoreMovement } from '../domain/movement';
@@ -80,13 +82,13 @@ export const Dashboard = ({ players, onReset, onEndMatch }: Props) => {
     <div className="flex h-full flex-col bg-neutral-950 p-6">
       <div className="flex justify-end gap-3">
         <TopBarButton
-          icon="↺"
+          icon={<RotateCcw size={18} />}
           label="リセット"
           onClick={() => setDialog('reset')}
           hoverClass="hover:bg-red-700 hover:text-white"
         />
         <TopBarButton
-          icon="🚪"
+          icon={<LogOut size={18} />}
           label="対戦終了"
           onClick={() => setDialog('endMatch')}
           hoverClass="hover:bg-emerald-700 hover:text-white"
@@ -230,7 +232,7 @@ const ActionButton = ({
 );
 
 type TopBarButtonProps = Readonly<{
-  icon: string;
+  icon: ReactNode;
   label: string;
   onClick: () => void;
   hoverClass: string;
@@ -242,7 +244,7 @@ const TopBarButton = ({ icon, label, onClick, hoverClass }: TopBarButtonProps) =
     onClick={onClick}
     className={`flex items-center gap-2 rounded-lg bg-neutral-800 px-4 py-2 text-lg font-bold text-neutral-400 transition ${hoverClass}`}
   >
-    <span>{icon}</span>
+    {icon}
     <span>{label}</span>
   </button>
 );
