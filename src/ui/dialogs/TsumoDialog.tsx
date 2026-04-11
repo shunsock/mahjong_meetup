@@ -10,6 +10,7 @@ import { Modal } from './Modal';
 import { PlayerSelector } from '../controls/PlayerSelector';
 import { ScoreInput } from '../controls/ScoreInput';
 import { CounterInput } from '../controls/CounterInput';
+import { NonNegativeInt } from '../../domain/non-negative-int';
 
 type Props = Readonly<{
   players: ReadonlyArray<Player>;
@@ -29,7 +30,7 @@ export const TsumoDialog = ({ players, onConfirm, onCancel }: Props) => {
   const [winner, setWinner] = useState<PlayerId | null>(null);
   const [dealer, setDealer] = useState<PlayerId | null>(null);
   const [total, setTotal] = useState<Points | null>(null);
-  const [honba, setHonba] = useState(0);
+  const [honba, setHonba] = useState<NonNegativeInt>(NonNegativeInt.zero);
 
   const canConfirm =
     winner !== null &&
@@ -104,7 +105,13 @@ export const TsumoDialog = ({ players, onConfirm, onCancel }: Props) => {
           onSelect={setTotal}
         />
 
-        <CounterInput label="本場" value={honba} onChange={setHonba} />
+        <CounterInput
+          label="本場"
+          value={honba}
+          onIncrement={() => setHonba(NonNegativeInt.increment(honba))}
+          onDecrement={() => setHonba(NonNegativeInt.decrement(honba))}
+          onReset={() => setHonba(NonNegativeInt.zero)}
+        />
       </div>
     </Modal>
   );

@@ -10,6 +10,7 @@ import { Modal } from './Modal';
 import { PlayerSelector } from '../controls/PlayerSelector';
 import { ScoreInput } from '../controls/ScoreInput';
 import { CounterInput } from '../controls/CounterInput';
+import { NonNegativeInt } from '../../domain/non-negative-int';
 
 type Props = Readonly<{
   players: ReadonlyArray<Player>;
@@ -30,7 +31,7 @@ export const RonDialog = ({ players, onConfirm, onCancel }: Props) => {
   const [loser, setLoser] = useState<PlayerId | null>(null);
   const [mode, setMode] = useState<Mode>('ko');
   const [amount, setAmount] = useState<Points | null>(null);
-  const [honba, setHonba] = useState(0);
+  const [honba, setHonba] = useState<NonNegativeInt>(NonNegativeInt.zero);
 
   const canConfirm =
     winner !== null && loser !== null && amount !== null && amount > 0;
@@ -87,7 +88,13 @@ export const RonDialog = ({ players, onConfirm, onCancel }: Props) => {
           onSelect={setAmount}
         />
 
-        <CounterInput label="本場" value={honba} onChange={setHonba} />
+        <CounterInput
+          label="本場"
+          value={honba}
+          onIncrement={() => setHonba(NonNegativeInt.increment(honba))}
+          onDecrement={() => setHonba(NonNegativeInt.decrement(honba))}
+          onReset={() => setHonba(NonNegativeInt.zero)}
+        />
       </div>
     </Modal>
   );

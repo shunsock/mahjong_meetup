@@ -7,6 +7,7 @@
  */
 
 import type { PlayerId } from './player';
+import type { NonNegativeInt } from './non-negative-int';
 
 export type Points = number;
 
@@ -28,20 +29,20 @@ export type ScoreMovement =
       winner: PlayerId;
       loser: PlayerId;
       amount: Points;
-      honba: number;
+      honba: NonNegativeInt;
     }>
   | Readonly<{
       kind: 'tsumo-ko';
       winner: PlayerId;
       dealer: PlayerId;
       total: Points;
-      honba: number;
+      honba: NonNegativeInt;
     }>
   | Readonly<{
       kind: 'tsumo-oya';
       winner: PlayerId;
       total: Points;
-      honba: number;
+      honba: NonNegativeInt;
     }>
   | Readonly<{
       kind: 'ryukyoku';
