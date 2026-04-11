@@ -49,7 +49,7 @@ export const SetupScreen = ({ onStart }: Props) => {
                 onChange={(e) =>
                   setNames((prev) => ({ ...prev, [id]: e.target.value }))
                 }
-                className="w-full rounded-lg bg-neutral-800 px-6 py-4 text-3xl text-neutral-100 outline-none focus:ring-4 focus:ring-sky-500"
+                className="w-full rounded-lg bg-neutral-800 px-6 py-4 text-3xl text-neutral-100 outline-none focus:ring-4 focus:ring-emerald-500"
                 placeholder={`プレイヤー${index + 1}`}
                 autoFocus={index === 0}
               />
@@ -61,7 +61,7 @@ export const SetupScreen = ({ onStart }: Props) => {
           type="button"
           disabled={!allFilled}
           onClick={handleStart}
-          className="w-full rounded-lg bg-sky-600 py-6 text-4xl font-bold text-white transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:bg-neutral-700 disabled:text-neutral-500"
+          className="w-full rounded-lg bg-emerald-700 py-6 text-4xl font-bold text-white transition hover:bg-emerald-600 disabled:cursor-not-allowed disabled:bg-neutral-700 disabled:text-neutral-500"
         >
           対局開始
         </button>

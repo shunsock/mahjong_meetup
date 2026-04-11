@@ -40,7 +40,7 @@ export const Modal = ({
           type="button"
           onClick={onConfirm}
           disabled={confirmDisabled}
-          className="flex-1 rounded-xl bg-sky-600 py-4 text-3xl font-bold text-white hover:bg-sky-500 disabled:cursor-not-allowed disabled:bg-neutral-800 disabled:text-neutral-600"
+          className="flex-1 rounded-xl bg-emerald-700 py-4 text-3xl font-bold text-white hover:bg-emerald-600 disabled:cursor-not-allowed disabled:bg-neutral-800 disabled:text-neutral-600"
         >
           {confirmLabel}
         </button>

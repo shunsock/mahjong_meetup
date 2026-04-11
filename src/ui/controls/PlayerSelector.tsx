@@ -33,7 +33,7 @@ export const PlayerSelector = ({
             onClick={() => onSelect(player.id)}
             className={`truncate rounded-xl px-4 py-5 text-3xl font-bold transition ${
               isSelected
-                ? 'bg-sky-600 text-white ring-4 ring-sky-300'
+                ? 'bg-emerald-700 text-white ring-4 ring-emerald-400'
                 : isDisabled
                   ? 'bg-neutral-800 text-neutral-600'
                   : 'bg-neutral-800 text-neutral-200 hover:bg-neutral-700'

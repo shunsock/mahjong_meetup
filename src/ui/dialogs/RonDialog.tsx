@@ -109,7 +109,7 @@ const ModeButton = ({
     onClick={onClick}
     className={`rounded-xl py-4 text-3xl font-bold transition ${
       active
-        ? 'bg-sky-600 text-white ring-4 ring-sky-300'
+        ? 'bg-emerald-700 text-white ring-4 ring-emerald-400'
         : 'bg-neutral-800 text-neutral-200 hover:bg-neutral-700'
     }`}
   >

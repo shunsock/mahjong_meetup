@@ -47,7 +47,7 @@ export const RyukyokuDialog = ({ players, onConfirm, onCancel }: Props) => {
                 onClick={() => toggle(player.id)}
                 className={`flex items-center justify-between rounded-xl px-6 py-6 text-3xl font-bold transition ${
                   isTenpai
-                    ? 'bg-sky-600 text-white ring-4 ring-sky-300'
+                    ? 'bg-emerald-700 text-white ring-4 ring-emerald-400'
                     : 'bg-neutral-800 text-neutral-300 hover:bg-neutral-700'
                 }`}
               >

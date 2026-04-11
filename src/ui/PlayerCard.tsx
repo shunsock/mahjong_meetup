@@ -13,16 +13,23 @@ type Props = Readonly<{
   deltas: ReadonlyArray<DeltaEntry>;
 }>;
 
+const rankLabel = (rank: number): string => {
+  switch (rank) {
+    case 1: return '一位';
+    case 2: return '二位';
+    case 3: return '三位';
+    default: return '四位';
+  }
+};
+
 const rankColor = (rank: number): string => {
   switch (rank) {
     case 1:
       return 'text-yellow-400';
-    case 2:
-      return 'text-neutral-300';
-    case 3:
-      return 'text-amber-600';
+    case 4:
+      return 'text-red-400';
     default:
-      return 'text-neutral-500';
+      return 'text-neutral-400';
   }
 };
 
@@ -46,8 +53,8 @@ const formatDelta = (delta: number): string => {
  */
 export const PlayerCard = ({ player, score, rank, deltas }: Props) => (
   <div className="flex h-full min-w-0 flex-1 flex-col items-center justify-center rounded-2xl bg-neutral-900 p-6 ring-1 ring-neutral-800">
-    <div className={`text-3xl font-bold ${rankColor(rank)}`}>
-      {rank}位
+    <div className={`font-serif text-3xl font-bold ${rankColor(rank)}`}>
+      {rankLabel(rank)}
     </div>
     <div className="mt-2 max-w-full truncate text-2xl text-neutral-300">
       {player.name}

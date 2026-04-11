@@ -179,7 +179,7 @@ type ActionButtonProps = Readonly<{
 const buttonVariantClass = (variant: ActionButtonProps['variant']): string => {
   switch (variant) {
     case 'primary':
-      return 'bg-sky-600 hover:bg-sky-500';
+      return 'bg-emerald-700 hover:bg-emerald-600';
     case 'secondary':
       return 'bg-neutral-700 hover:bg-neutral-600';
     case 'danger':
