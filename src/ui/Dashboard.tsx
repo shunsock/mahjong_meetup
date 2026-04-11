@@ -78,7 +78,12 @@ export const Dashboard = ({ players, onReset, onEndMatch }: Props) => {
 
   return (
     <div className="flex h-full flex-col bg-neutral-950 p-6">
-      <div className="flex flex-1 gap-4">
+      <div className="flex justify-end gap-3">
+        <TopBarButton label="リセット" onClick={() => setDialog('reset')} />
+        <TopBarButton label="対戦終了" onClick={() => setDialog('endMatch')} />
+      </div>
+
+      <div className="mt-4 flex flex-1 gap-4">
         {ranked.map((entry) => (
           <PlayerCard
             key={entry.player.id}
@@ -97,8 +102,6 @@ export const Dashboard = ({ players, onReset, onEndMatch }: Props) => {
         onRyukyoku={() => setDialog('ryukyoku')}
         onRiichi={() => setDialog('riichi')}
         onUndo={undo}
-        onReset={() => setDialog('reset')}
-        onEndMatch={() => setDialog('endMatch')}
       />
 
       {dialog === 'ron' && (
@@ -156,8 +159,6 @@ type ActionBarProps = Readonly<{
   onRyukyoku: () => void;
   onRiichi: () => void;
   onUndo: () => void;
-  onReset: () => void;
-  onEndMatch: () => void;
 }>;
 
 const ActionBar = ({
@@ -167,24 +168,18 @@ const ActionBar = ({
   onRyukyoku,
   onRiichi,
   onUndo,
-  onReset,
-  onEndMatch,
 }: ActionBarProps) => (
-  <div className="mt-6 flex flex-col gap-4">
-    <div className="flex gap-4">
-      <ActionButton label="リーチ" onClick={onRiichi} variant="primary" />
-      <ActionButton label="ロン" onClick={onRon} variant="primary" />
-      <ActionButton label="ツモ" onClick={onTsumo} variant="primary" />
-      <ActionButton label="流局" onClick={onRyukyoku} variant="primary" />
-      <ActionButton
-        label="Undo"
-        onClick={onUndo}
-        variant="secondary"
-        disabled={!canUndo}
-      />
-      <ActionButton label="リセット" onClick={onReset} variant="danger" />
-    </div>
-    <ActionButton label="対戦終了" onClick={onEndMatch} variant="danger" />
+  <div className="mt-6 flex gap-4">
+    <ActionButton label="リーチ" onClick={onRiichi} variant="primary" />
+    <ActionButton label="ロン" onClick={onRon} variant="primary" />
+    <ActionButton label="ツモ" onClick={onTsumo} variant="primary" />
+    <ActionButton label="流局" onClick={onRyukyoku} variant="primary" />
+    <ActionButton
+      label="Undo"
+      onClick={onUndo}
+      variant="secondary"
+      disabled={!canUndo}
+    />
   </div>
 );
 
@@ -219,6 +214,21 @@ const ActionButton = ({
     className={`flex-1 rounded-xl py-6 text-4xl font-bold text-white transition disabled:cursor-not-allowed disabled:bg-neutral-800 disabled:text-neutral-600 ${buttonVariantClass(
       variant,
     )}`}
+  >
+    {label}
+  </button>
+);
+
+type TopBarButtonProps = Readonly<{
+  label: string;
+  onClick: () => void;
+}>;
+
+const TopBarButton = ({ label, onClick }: TopBarButtonProps) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className="rounded-lg bg-neutral-800 px-4 py-2 text-lg font-bold text-neutral-400 transition hover:bg-neutral-700 hover:text-neutral-200"
   >
     {label}
   </button>
