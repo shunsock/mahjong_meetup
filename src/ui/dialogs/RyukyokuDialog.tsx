@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Player, PlayerId } from '../../domain/player';
 import { Modal } from './Modal';
+import { CounterInput } from '../controls/CounterInput';
 
 type Props = Readonly<{
   players: ReadonlyArray<Player>;
@@ -14,6 +15,8 @@ type Props = Readonly<{
  */
 export const RyukyokuDialog = ({ players, onConfirm, onCancel }: Props) => {
   const [tenpaiSet, setTenpaiSet] = useState<ReadonlySet<PlayerId>>(new Set());
+  const [honba, setHonba] = useState(0);
+  const [kyotaku, setKyotaku] = useState(0);
 
   const toggle = (id: PlayerId) => {
     setTenpaiSet((prev) => {
@@ -58,6 +61,11 @@ export const RyukyokuDialog = ({ players, onConfirm, onCancel }: Props) => {
               </button>
             );
           })}
+        </div>
+
+        <div className="space-y-3">
+          <CounterInput label="本場" value={honba} onChange={setHonba} />
+          <CounterInput label="供託" value={kyotaku} onChange={setKyotaku} />
         </div>
       </div>
     </Modal>

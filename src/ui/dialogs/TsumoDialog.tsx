@@ -9,6 +9,7 @@ import {
 import { Modal } from './Modal';
 import { PlayerSelector } from '../controls/PlayerSelector';
 import { ScoreInput } from '../controls/ScoreInput';
+import { CounterInput } from '../controls/CounterInput';
 
 type Props = Readonly<{
   players: ReadonlyArray<Player>;
@@ -28,6 +29,8 @@ export const TsumoDialog = ({ players, onConfirm, onCancel }: Props) => {
   const [winner, setWinner] = useState<PlayerId | null>(null);
   const [dealer, setDealer] = useState<PlayerId | null>(null);
   const [total, setTotal] = useState<Points | null>(null);
+  const [honba, setHonba] = useState(0);
+  const [kyotaku, setKyotaku] = useState(0);
 
   const canConfirm =
     winner !== null &&
@@ -101,6 +104,11 @@ export const TsumoDialog = ({ players, onConfirm, onCancel }: Props) => {
           value={total}
           onSelect={setTotal}
         />
+
+        <div className="space-y-3">
+          <CounterInput label="本場" value={honba} onChange={setHonba} />
+          <CounterInput label="供託" value={kyotaku} onChange={setKyotaku} />
+        </div>
       </div>
     </Modal>
   );
