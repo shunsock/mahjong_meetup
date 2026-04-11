@@ -79,8 +79,18 @@ export const Dashboard = ({ players, onReset, onEndMatch }: Props) => {
   return (
     <div className="flex h-full flex-col bg-neutral-950 p-6">
       <div className="flex justify-end gap-3">
-        <TopBarButton label="リセット" onClick={() => setDialog('reset')} />
-        <TopBarButton label="対戦終了" onClick={() => setDialog('endMatch')} />
+        <TopBarButton
+          icon="↺"
+          label="リセット"
+          onClick={() => setDialog('reset')}
+          hoverClass="hover:bg-red-700 hover:text-white"
+        />
+        <TopBarButton
+          icon="🚪"
+          label="対戦終了"
+          onClick={() => setDialog('endMatch')}
+          hoverClass="hover:bg-emerald-700 hover:text-white"
+        />
       </div>
 
       <div className="mt-4 flex flex-1 gap-4">
@@ -220,16 +230,19 @@ const ActionButton = ({
 );
 
 type TopBarButtonProps = Readonly<{
+  icon: string;
   label: string;
   onClick: () => void;
+  hoverClass: string;
 }>;
 
-const TopBarButton = ({ label, onClick }: TopBarButtonProps) => (
+const TopBarButton = ({ icon, label, onClick, hoverClass }: TopBarButtonProps) => (
   <button
     type="button"
     onClick={onClick}
-    className="rounded-lg bg-neutral-800 px-4 py-2 text-lg font-bold text-neutral-400 transition hover:bg-neutral-700 hover:text-neutral-200"
+    className={`flex items-center gap-2 rounded-lg bg-neutral-800 px-4 py-2 text-lg font-bold text-neutral-400 transition ${hoverClass}`}
   >
-    {label}
+    <span>{icon}</span>
+    <span>{label}</span>
   </button>
 );
