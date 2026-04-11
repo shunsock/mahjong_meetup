@@ -9,13 +9,15 @@ import { TsumoDialog } from './dialogs/TsumoDialog';
 import { RyukyokuDialog } from './dialogs/RyukyokuDialog';
 import { RiichiDialog } from './dialogs/RiichiDialog';
 import { ResetDialog } from './dialogs/ResetDialog';
+import { EndMatchDialog } from './dialogs/EndMatchDialog';
 
 type Props = Readonly<{
   players: ReadonlyArray<Player>;
   onReset: () => void;
+  onEndMatch: (board: Scoreboard) => void;
 }>;
 
-type DialogKind = 'ron' | 'tsumo' | 'ryukyoku' | 'riichi' | 'reset' | null;
+type DialogKind = 'ron' | 'tsumo' | 'ryukyoku' | 'riichi' | 'reset' | 'endMatch' | null;
 
 type DeltaEntry = Readonly<{
   name: string;
@@ -52,7 +54,7 @@ const rankPlayers = (board: Scoreboard): ReadonlyArray<RankedPlayer> => {
   }));
 };
 
-export const Dashboard = ({ players, onReset }: Props) => {
+export const Dashboard = ({ players, onReset, onEndMatch }: Props) => {
   const { board, canUndo, dispatch, undo, reset } = useGameState(players);
   const [dialog, setDialog] = useState<DialogKind>(null);
 
@@ -67,6 +69,11 @@ export const Dashboard = ({ players, onReset }: Props) => {
     reset(players);
     setDialog(null);
     onReset();
+  };
+
+  const handleEndMatch = () => {
+    setDialog(null);
+    onEndMatch(board);
   };
 
   return (
@@ -91,6 +98,7 @@ export const Dashboard = ({ players, onReset }: Props) => {
         onRiichi={() => setDialog('riichi')}
         onUndo={undo}
         onReset={() => setDialog('reset')}
+        onEndMatch={() => setDialog('endMatch')}
       />
 
       {dialog === 'ron' && (
@@ -131,6 +139,12 @@ export const Dashboard = ({ players, onReset }: Props) => {
           onCancel={() => setDialog(null)}
         />
       )}
+      {dialog === 'endMatch' && (
+        <EndMatchDialog
+          onConfirm={handleEndMatch}
+          onCancel={() => setDialog(null)}
+        />
+      )}
     </div>
   );
 };
@@ -143,6 +157,7 @@ type ActionBarProps = Readonly<{
   onRiichi: () => void;
   onUndo: () => void;
   onReset: () => void;
+  onEndMatch: () => void;
 }>;
 
 const ActionBar = ({
@@ -153,19 +168,23 @@ const ActionBar = ({
   onRiichi,
   onUndo,
   onReset,
+  onEndMatch,
 }: ActionBarProps) => (
-  <div className="mt-6 flex gap-4">
-    <ActionButton label="リーチ" onClick={onRiichi} variant="primary" />
-    <ActionButton label="ロン" onClick={onRon} variant="primary" />
-    <ActionButton label="ツモ" onClick={onTsumo} variant="primary" />
-    <ActionButton label="流局" onClick={onRyukyoku} variant="primary" />
-    <ActionButton
-      label="Undo"
-      onClick={onUndo}
-      variant="secondary"
-      disabled={!canUndo}
-    />
-    <ActionButton label="リセット" onClick={onReset} variant="danger" />
+  <div className="mt-6 flex flex-col gap-4">
+    <div className="flex gap-4">
+      <ActionButton label="リーチ" onClick={onRiichi} variant="primary" />
+      <ActionButton label="ロン" onClick={onRon} variant="primary" />
+      <ActionButton label="ツモ" onClick={onTsumo} variant="primary" />
+      <ActionButton label="流局" onClick={onRyukyoku} variant="primary" />
+      <ActionButton
+        label="Undo"
+        onClick={onUndo}
+        variant="secondary"
+        disabled={!canUndo}
+      />
+      <ActionButton label="リセット" onClick={onReset} variant="danger" />
+    </div>
+    <ActionButton label="対戦終了" onClick={onEndMatch} variant="danger" />
   </div>
 );
 
