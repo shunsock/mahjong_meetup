@@ -35,6 +35,7 @@ describe('apply: ron', () => {
       winner: 'p1',
       loser: 'p2',
       amount: 8000,
+      honba: 0,
     });
     expect(result.scores).toEqual({
       p1: 33000,
@@ -50,6 +51,7 @@ describe('apply: ron', () => {
       winner: 'p1',
       loser: 'p2',
       amount: 8000,
+      honba: 0,
     });
     expect(initial.scores.p1).toBe(INITIAL_POINTS);
     expect(initial.scores.p2).toBe(INITIAL_POINTS);
@@ -63,6 +65,7 @@ describe('apply: tsumo-ko', () => {
       winner: 'p1',
       dealer: 'p4',
       total: 8000,
+      honba: 0,
     });
     expect(result.scores).toEqual({
       p1: 25000 + 4000 + 2000 + 2000,
@@ -78,6 +81,7 @@ describe('apply: tsumo-ko', () => {
       winner: 'p2',
       dealer: 'p1',
       total: 2000,
+      honba: 0,
     });
     expect(result.scores).toEqual({
       p1: 25000 - 1000,
@@ -94,6 +98,7 @@ describe('apply: tsumo-oya', () => {
       kind: 'tsumo-oya',
       winner: 'p1',
       total: 12000,
+      honba: 0,
     });
     expect(result.scores).toEqual({
       p1: 25000 + 12000,
@@ -108,6 +113,7 @@ describe('apply: tsumo-oya', () => {
       kind: 'tsumo-oya',
       winner: 'p3',
       total: 11600,
+      honba: 0,
     });
     expect(result.scores).toEqual({
       p1: 25000 - 3900,
@@ -186,6 +192,7 @@ describe('供託回収', () => {
       winner: 'p3',
       loser: 'p4',
       amount: 8000,
+      honba: 0,
     });
     // p3: +8000 (ロン) +2000 (供託2本)
     expect(result.scores.p3).toBe(25000 + 8000 + 2000);
@@ -199,6 +206,7 @@ describe('供託回収', () => {
       winner: 'p3',
       dealer: 'p4',
       total: 8000,
+      honba: 0,
     });
     // p3: +8000 (ツモ) +2000 (供託2本)
     expect(result.scores.p3).toBe(25000 + 8000 + 2000);
@@ -210,6 +218,7 @@ describe('供託回収', () => {
       kind: 'tsumo-oya',
       winner: 'p3',
       total: 12000,
+      honba: 0,
     });
     // p3: +12000 (4000×3) +2000 (供託2本)
     expect(result.scores.p3).toBe(25000 + 4000 * 3 + 2000);
@@ -230,9 +239,69 @@ describe('供託回収', () => {
       winner: 'p1',
       loser: 'p2',
       amount: 8000,
+      honba: 0,
     });
     expect(result.scores.p1).toBe(25000 + 8000);
     expect(result.riichiStickCount).toBe(0);
+  });
+});
+
+describe('本場加算', () => {
+  it('ロン 1 本場: 放銃者が 300 追加で支払う', () => {
+    const result = apply(initial, {
+      kind: 'ron',
+      winner: 'p1',
+      loser: 'p2',
+      amount: 8000,
+      honba: 1,
+    });
+    expect(result.scores.p1).toBe(25000 + 8000 + 300);
+    expect(result.scores.p2).toBe(25000 - 8000 - 300);
+  });
+
+  it('ロン 3 本場: 放銃者が 900 追加で支払う', () => {
+    const result = apply(initial, {
+      kind: 'ron',
+      winner: 'p1',
+      loser: 'p2',
+      amount: 8000,
+      honba: 3,
+    });
+    expect(result.scores.p1).toBe(25000 + 8000 + 900);
+    expect(result.scores.p2).toBe(25000 - 8000 - 900);
+  });
+
+  it('子ツモ 2 本場: 各支払者が 200 追加で支払う', () => {
+    const result = apply(initial, {
+      kind: 'tsumo-ko',
+      winner: 'p1',
+      dealer: 'p4',
+      total: 8000,
+      honba: 2,
+    });
+    // 本場ボーナス: 各支払者 200、和了者 +600 (200×3人)
+    expect(result.scores).toEqual({
+      p1: 25000 + 4000 + 2000 + 2000 + 600,
+      p2: 25000 - 2000 - 200,
+      p3: 25000 - 2000 - 200,
+      p4: 25000 - 4000 - 200,
+    });
+  });
+
+  it('親ツモ 1 本場: 各子が 100 追加で支払う', () => {
+    const result = apply(initial, {
+      kind: 'tsumo-oya',
+      winner: 'p1',
+      total: 12000,
+      honba: 1,
+    });
+    // 本場ボーナス: 各子 100、和了者 +300 (100×3人)
+    expect(result.scores).toEqual({
+      p1: 25000 + 12000 + 300,
+      p2: 25000 - 4000 - 100,
+      p3: 25000 - 4000 - 100,
+      p4: 25000 - 4000 - 100,
+    });
   });
 });
 
@@ -243,8 +312,8 @@ describe('replay', () => {
 
   it('複数イベントを順に適用した結果が得られる', () => {
     const history: ReadonlyArray<ScoreMovement> = [
-      { kind: 'ron', winner: 'p1', loser: 'p2', amount: 8000 },
-      { kind: 'tsumo-oya', winner: 'p1', total: 12000 },
+      { kind: 'ron', winner: 'p1', loser: 'p2', amount: 8000, honba: 0 },
+      { kind: 'tsumo-oya', winner: 'p1', total: 12000, honba: 0 },
       { kind: 'ryukyoku', tenpai: ['p3', 'p4'] },
     ];
     const result = replay(initial, history);
@@ -262,8 +331,8 @@ describe('replay', () => {
 
   it('Undo 相当: 末尾を切り落として replay すると直前の状態に戻る', () => {
     const history: ReadonlyArray<ScoreMovement> = [
-      { kind: 'ron', winner: 'p1', loser: 'p2', amount: 8000 },
-      { kind: 'ron', winner: 'p3', loser: 'p4', amount: 1000 },
+      { kind: 'ron', winner: 'p1', loser: 'p2', amount: 8000, honba: 0 },
+      { kind: 'ron', winner: 'p3', loser: 'p4', amount: 1000, honba: 0 },
     ];
     const afterFirst = replay(initial, history.slice(0, 1));
     const afterUndo = replay(initial, history.slice(0, -1));

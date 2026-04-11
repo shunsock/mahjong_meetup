@@ -9,6 +9,7 @@ import {
 import { Modal } from './Modal';
 import { PlayerSelector } from '../controls/PlayerSelector';
 import { ScoreInput } from '../controls/ScoreInput';
+import { CounterInput } from '../controls/CounterInput';
 
 type Props = Readonly<{
   players: ReadonlyArray<Player>;
@@ -29,13 +30,14 @@ export const RonDialog = ({ players, onConfirm, onCancel }: Props) => {
   const [loser, setLoser] = useState<PlayerId | null>(null);
   const [mode, setMode] = useState<Mode>('ko');
   const [amount, setAmount] = useState<Points | null>(null);
+  const [honba, setHonba] = useState(0);
 
   const canConfirm =
     winner !== null && loser !== null && amount !== null && amount > 0;
 
   const handleConfirm = () => {
     if (!canConfirm) return;
-    onConfirm({ kind: 'ron', winner, loser, amount });
+    onConfirm({ kind: 'ron', winner, loser, amount, honba });
   };
 
   const presets = mode === 'ko' ? KO_POINT_PRESETS : OYA_POINT_PRESETS;
@@ -84,6 +86,8 @@ export const RonDialog = ({ players, onConfirm, onCancel }: Props) => {
           value={amount}
           onSelect={setAmount}
         />
+
+        <CounterInput label="本場" value={honba} onChange={setHonba} />
       </div>
     </Modal>
   );

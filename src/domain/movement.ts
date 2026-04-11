@@ -28,17 +28,20 @@ export type ScoreMovement =
       winner: PlayerId;
       loser: PlayerId;
       amount: Points;
+      honba: number;
     }>
   | Readonly<{
       kind: 'tsumo-ko';
       winner: PlayerId;
       dealer: PlayerId;
       total: Points;
+      honba: number;
     }>
   | Readonly<{
       kind: 'tsumo-oya';
       winner: PlayerId;
       total: Points;
+      honba: number;
     }>
   | Readonly<{
       kind: 'ryukyoku';

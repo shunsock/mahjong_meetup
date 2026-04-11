@@ -68,11 +68,12 @@ export const apply = (
   switch (movement.kind) {
     case 'ron': {
       const riichiBonus = board.riichiStickCount * 1000;
+      const honbaBonus = movement.honba * 300;
       return {
         ...board,
         scores: addScores(board.scores, [
-          [movement.winner, movement.amount + riichiBonus],
-          [movement.loser, -movement.amount],
+          [movement.winner, movement.amount + riichiBonus + honbaBonus],
+          [movement.loser, -movement.amount - honbaBonus],
         ]),
         riichiStickCount: 0,
       };
@@ -84,13 +85,15 @@ export const apply = (
         (id) => id !== movement.winner && id !== movement.dealer,
       );
       const riichiBonus = board.riichiStickCount * 1000;
-      const gained = fromOya + fromKo * koPayers.length + riichiBonus;
+      const honbaPerPayer = movement.honba * 100;
+      const payerCount = 1 + koPayers.length; // 親 + 子2人
+      const gained = fromOya + fromKo * koPayers.length + riichiBonus + honbaPerPayer * payerCount;
       return {
         ...board,
         scores: addScores(board.scores, [
           [movement.winner, gained],
-          [movement.dealer, -fromOya],
-          ...koPayers.map((id) => [id, -fromKo] as const),
+          [movement.dealer, -fromOya - honbaPerPayer],
+          ...koPayers.map((id) => [id, -fromKo - honbaPerPayer] as const),
         ]),
         riichiStickCount: 0,
       };
@@ -100,12 +103,13 @@ export const apply = (
       const { fromKo } = calcTsumoOyaDistribution(movement.total);
       const koPayers = PLAYER_IDS.filter((id) => id !== movement.winner);
       const riichiBonus = board.riichiStickCount * 1000;
-      const gained = fromKo * koPayers.length + riichiBonus;
+      const honbaPerPayer = movement.honba * 100;
+      const gained = fromKo * koPayers.length + riichiBonus + honbaPerPayer * koPayers.length;
       return {
         ...board,
         scores: addScores(board.scores, [
           [movement.winner, gained],
-          ...koPayers.map((id) => [id, -fromKo] as const),
+          ...koPayers.map((id) => [id, -fromKo - honbaPerPayer] as const),
         ]),
         riichiStickCount: 0,
       };
