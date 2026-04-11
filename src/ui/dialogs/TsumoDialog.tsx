@@ -10,7 +10,7 @@ import { Modal } from './Modal';
 import { PlayerSelector } from '../controls/PlayerSelector';
 import { ScoreInput } from '../controls/ScoreInput';
 import { CounterInput } from '../controls/CounterInput';
-import { NonNegativeInt } from '../../domain/non-negative-int';
+import { NaturalNumber } from '../../domain/natural-number';
 
 type Props = Readonly<{
   players: ReadonlyArray<Player>;
@@ -30,7 +30,7 @@ export const TsumoDialog = ({ players, onConfirm, onCancel }: Props) => {
   const [winner, setWinner] = useState<PlayerId | null>(null);
   const [dealer, setDealer] = useState<PlayerId | null>(null);
   const [total, setTotal] = useState<Points | null>(null);
-  const [honba, setHonba] = useState<NonNegativeInt>(NonNegativeInt.zero);
+  const [honba, setHonba] = useState(NaturalNumber.of(0));
 
   const canConfirm =
     winner !== null &&
@@ -108,9 +108,9 @@ export const TsumoDialog = ({ players, onConfirm, onCancel }: Props) => {
         <CounterInput
           label="本場"
           value={honba}
-          onIncrement={() => setHonba(NonNegativeInt.increment(honba))}
-          onDecrement={() => setHonba(NonNegativeInt.decrement(honba))}
-          onReset={() => setHonba(NonNegativeInt.zero)}
+          onIncrement={() => setHonba(NaturalNumber.of(honba + 1))}
+          onDecrement={() => setHonba(NaturalNumber.of(Math.max(0, honba - 1)))}
+          onReset={() => setHonba(NaturalNumber.of(0))}
         />
       </div>
     </Modal>
