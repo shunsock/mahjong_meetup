@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ChevronDown } from 'lucide-react';
 import { PLAYER_IDS, type Player, type PlayerId } from '../domain/player';
 import {
   DEFAULT_CONFIG,
@@ -29,6 +30,7 @@ export const SetupScreen = ({ onStart }: Props) => {
     UMA_PRESETS.findIndex((p) => p.label === '10-30'),
   );
   const [returnPoint, setReturnPoint] = useState(DEFAULT_CONFIG.returnPoint);
+  const [configOpen, setConfigOpen] = useState(false);
 
   const allFilled = PLAYER_IDS.every((id) => names[id].trim().length > 0);
 
@@ -75,48 +77,67 @@ export const SetupScreen = ({ onStart }: Props) => {
           ))}
         </div>
 
-        <div className="space-y-4 rounded-2xl bg-neutral-900 p-6 ring-1 ring-neutral-800">
-          <h2 className="text-2xl font-bold text-neutral-300">順位点・返し点設定</h2>
+        <div className="rounded-2xl bg-neutral-900 ring-1 ring-neutral-800">
+          <button
+            type="button"
+            onClick={() => setConfigOpen((prev) => !prev)}
+            className="flex w-full items-center justify-between px-6 py-5 text-left"
+          >
+            <h2 className="text-2xl font-bold text-neutral-300">
+              順位点・返し点設定
+              <span className="ml-3 text-lg font-normal text-neutral-500">
+                {UMA_PRESETS[umaIndex].label} / {returnPoint.toLocaleString('en-US')}点返し
+              </span>
+            </h2>
+            <ChevronDown
+              size={24}
+              className={`text-neutral-400 transition-transform ${configOpen ? 'rotate-180' : ''}`}
+            />
+          </button>
 
-          <div className="space-y-2">
-            <span className="text-xl text-neutral-400">順位点</span>
-            <div className="flex gap-3">
-              {UMA_PRESETS.map((preset, index) => (
-                <button
-                  key={preset.label}
-                  type="button"
-                  onClick={() => setUmaIndex(index)}
-                  className={`flex-1 rounded-lg py-3 text-2xl font-bold transition ${
-                    umaIndex === index
-                      ? 'bg-emerald-700 text-white ring-4 ring-emerald-400'
-                      : 'bg-neutral-800 text-neutral-400 hover:bg-neutral-700'
-                  }`}
-                >
-                  {preset.label}
-                </button>
-              ))}
-            </div>
-          </div>
+          {configOpen && (
+            <div className="space-y-4 border-t border-neutral-800 px-6 pb-6 pt-4">
+              <div className="space-y-2">
+                <span className="text-xl text-neutral-400">順位点</span>
+                <div className="flex gap-3">
+                  {UMA_PRESETS.map((preset, index) => (
+                    <button
+                      key={preset.label}
+                      type="button"
+                      onClick={() => setUmaIndex(index)}
+                      className={`flex-1 rounded-lg py-3 text-2xl font-bold transition ${
+                        umaIndex === index
+                          ? 'bg-emerald-700 text-white ring-4 ring-emerald-400'
+                          : 'bg-neutral-800 text-neutral-400 hover:bg-neutral-700'
+                      }`}
+                    >
+                      {preset.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-          <div className="space-y-2">
-            <span className="text-xl text-neutral-400">返し点</span>
-            <div className="flex gap-3">
-              {RETURN_POINT_OPTIONS.map((point) => (
-                <button
-                  key={point}
-                  type="button"
-                  onClick={() => setReturnPoint(point)}
-                  className={`flex-1 rounded-lg py-3 text-2xl font-bold transition ${
-                    returnPoint === point
-                      ? 'bg-emerald-700 text-white ring-4 ring-emerald-400'
-                      : 'bg-neutral-800 text-neutral-400 hover:bg-neutral-700'
-                  }`}
-                >
-                  {point.toLocaleString('en-US')}点
-                </button>
-              ))}
+              <div className="space-y-2">
+                <span className="text-xl text-neutral-400">返し点</span>
+                <div className="flex gap-3">
+                  {RETURN_POINT_OPTIONS.map((point) => (
+                    <button
+                      key={point}
+                      type="button"
+                      onClick={() => setReturnPoint(point)}
+                      className={`flex-1 rounded-lg py-3 text-2xl font-bold transition ${
+                        returnPoint === point
+                          ? 'bg-emerald-700 text-white ring-4 ring-emerald-400'
+                          : 'bg-neutral-800 text-neutral-400 hover:bg-neutral-700'
+                      }`}
+                    >
+                      {point.toLocaleString('en-US')}点
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         <button
