@@ -44,7 +44,7 @@ export const RiichiDialog = ({ players, onConfirm, onCancel }: Props) => {
     >
       <div className="space-y-6">
         <p className="text-2xl text-neutral-400">
-          リーチ宣言するプレイヤー���選択してください
+          リーチ宣言するプレイヤーを選択してください
         </p>
         <div className="grid grid-cols-2 gap-4">
           {players.map((player) => {
