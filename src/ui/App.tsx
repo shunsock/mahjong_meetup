@@ -1,17 +1,18 @@
 import { useState } from 'react';
 import type { Player } from '../domain/player';
 import type { Scoreboard } from '../domain/scoreboard';
+import type { FinalScoreConfig } from '../domain/final-score';
 import { SetupScreen } from './SetupScreen';
 import { Dashboard } from './Dashboard';
 import { ResultScreen } from './ResultScreen';
 
 type AppState =
   | Readonly<{ kind: 'setup' }>
-  | Readonly<{ kind: 'playing'; players: ReadonlyArray<Player> }>
-  | Readonly<{ kind: 'result'; board: Scoreboard }>;
+  | Readonly<{ kind: 'playing'; players: ReadonlyArray<Player>; config: FinalScoreConfig }>
+  | Readonly<{ kind: 'result'; board: Scoreboard; config: FinalScoreConfig }>;
 
 /**
- * アプリのルート。起動時は SetupScreen で名前を入力し、
+ * アプリのルート。起動時は SetupScreen で名前とウマオカを設定し、
  * 確定後に Dashboard に遷移する。
  * 対戦終了で ResultScreen、リセットで SetupScreen へ。
  */
@@ -22,7 +23,9 @@ export const App = () => {
     case 'setup':
       return (
         <SetupScreen
-          onStart={(players) => setState({ kind: 'playing', players })}
+          onStart={(players, config) =>
+            setState({ kind: 'playing', players, config })
+          }
         />
       );
     case 'playing':
@@ -30,13 +33,16 @@ export const App = () => {
         <Dashboard
           players={state.players}
           onReset={() => setState({ kind: 'setup' })}
-          onEndMatch={(board) => setState({ kind: 'result', board })}
+          onEndMatch={(board) =>
+            setState({ kind: 'result', board, config: state.config })
+          }
         />
       );
     case 'result':
       return (
         <ResultScreen
           board={state.board}
+          config={state.config}
           onBackToSetup={() => setState({ kind: 'setup' })}
         />
       );

@@ -22,6 +22,16 @@ export const DEFAULT_CONFIG: FinalScoreConfig = {
   placementBonus: [30, 10, -10, -30],
 };
 
+/** よく使われるウマのプリセット。ラベルは「小-大」形式。 */
+export const UMA_PRESETS: ReadonlyArray<
+  Readonly<{ label: string; bonus: readonly [number, number, number, number] }>
+> = [
+  { label: '5-10', bonus: [10, 5, -5, -10] },
+  { label: '10-20', bonus: [20, 10, -10, -20] },
+  { label: '10-30', bonus: [30, 10, -10, -30] },
+  { label: '20-30', bonus: [30, 20, -20, -30] },
+];
+
 /** 最終得点 (小数点 1 桁)。 */
 export const calcFinalScore = (
   score: Points,

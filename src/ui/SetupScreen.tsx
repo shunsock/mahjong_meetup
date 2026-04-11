@@ -1,20 +1,34 @@
 import { useState } from 'react';
 import { PLAYER_IDS, type Player, type PlayerId } from '../domain/player';
+import {
+  DEFAULT_CONFIG,
+  UMA_PRESETS,
+  type FinalScoreConfig,
+} from '../domain/final-score';
 
 type Props = Readonly<{
-  onStart: (players: ReadonlyArray<Player>) => void;
+  onStart: (
+    players: ReadonlyArray<Player>,
+    config: FinalScoreConfig,
+  ) => void;
 }>;
 
 type NameMap = Readonly<Record<PlayerId, string>>;
 
 const emptyNames: NameMap = { p1: '', p2: '', p3: '', p4: '' };
 
+const RETURN_POINT_OPTIONS = [25000, 30000] as const;
+
 /**
- * プレイヤー名の入力画面。4 人全員の名前が入力されるまで
- * 「開始」ボタンは無効化される。
+ * プレイヤー名・ウマオカの入力画面。
+ * 4 人全員の名前が入力されるまで「開始」ボタンは無効化される。
  */
 export const SetupScreen = ({ onStart }: Props) => {
   const [names, setNames] = useState<NameMap>(emptyNames);
+  const [umaIndex, setUmaIndex] = useState(
+    UMA_PRESETS.findIndex((p) => p.label === '10-30'),
+  );
+  const [returnPoint, setReturnPoint] = useState(DEFAULT_CONFIG.returnPoint);
 
   const allFilled = PLAYER_IDS.every((id) => names[id].trim().length > 0);
 
@@ -24,7 +38,11 @@ export const SetupScreen = ({ onStart }: Props) => {
       id,
       name: names[id].trim(),
     }));
-    onStart(players);
+    const config: FinalScoreConfig = {
+      returnPoint,
+      placementBonus: UMA_PRESETS[umaIndex].bonus,
+    };
+    onStart(players, config);
   };
 
   return (
@@ -55,6 +73,50 @@ export const SetupScreen = ({ onStart }: Props) => {
               />
             </label>
           ))}
+        </div>
+
+        <div className="space-y-4 rounded-2xl bg-neutral-900 p-6 ring-1 ring-neutral-800">
+          <h2 className="text-2xl font-bold text-neutral-300">ウマ・オカ設定</h2>
+
+          <div className="space-y-2">
+            <span className="text-xl text-neutral-400">ウマ</span>
+            <div className="flex gap-3">
+              {UMA_PRESETS.map((preset, index) => (
+                <button
+                  key={preset.label}
+                  type="button"
+                  onClick={() => setUmaIndex(index)}
+                  className={`flex-1 rounded-lg py-3 text-2xl font-bold transition ${
+                    umaIndex === index
+                      ? 'bg-emerald-700 text-white ring-4 ring-emerald-400'
+                      : 'bg-neutral-800 text-neutral-400 hover:bg-neutral-700'
+                  }`}
+                >
+                  {preset.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <span className="text-xl text-neutral-400">オカ (返し点)</span>
+            <div className="flex gap-3">
+              {RETURN_POINT_OPTIONS.map((point) => (
+                <button
+                  key={point}
+                  type="button"
+                  onClick={() => setReturnPoint(point)}
+                  className={`flex-1 rounded-lg py-3 text-2xl font-bold transition ${
+                    returnPoint === point
+                      ? 'bg-emerald-700 text-white ring-4 ring-emerald-400'
+                      : 'bg-neutral-800 text-neutral-400 hover:bg-neutral-700'
+                  }`}
+                >
+                  {point.toLocaleString('en-US')}点
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
         <button

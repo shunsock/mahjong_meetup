@@ -1,10 +1,11 @@
 import type { Scoreboard } from '../domain/scoreboard';
 import type { Player } from '../domain/player';
 import type { Points } from '../domain/movement';
-import { calcFinalScore, DEFAULT_CONFIG } from '../domain/final-score';
+import { calcFinalScore, type FinalScoreConfig } from '../domain/final-score';
 
 type Props = Readonly<{
   board: Scoreboard;
+  config: FinalScoreConfig;
   onBackToSetup: () => void;
 }>;
 
@@ -15,7 +16,10 @@ type RankedResult = Readonly<{
   finalScore: number;
 }>;
 
-const rankPlayers = (board: Scoreboard): ReadonlyArray<RankedResult> => {
+const rankPlayers = (
+  board: Scoreboard,
+  config: FinalScoreConfig,
+): ReadonlyArray<RankedResult> => {
   const withScores = board.players.map((player) => ({
     player,
     score: board.scores[player.id],
@@ -27,7 +31,7 @@ const rankPlayers = (board: Scoreboard): ReadonlyArray<RankedResult> => {
       player: entry.player,
       score: entry.score,
       rank,
-      finalScore: calcFinalScore(entry.score, rank, DEFAULT_CONFIG),
+      finalScore: calcFinalScore(entry.score, rank, config),
     };
   });
 };
@@ -63,11 +67,19 @@ const finalScoreColor = (finalScore: number): string => {
   return 'text-neutral-500';
 };
 
+/** ウマ設定を「小-大」形式のラベルにする。 */
+const formatUmaLabel = (config: FinalScoreConfig): string => {
+  const abs = config.placementBonus.map(Math.abs);
+  const min = Math.min(...abs);
+  const max = Math.max(...abs);
+  return `${min}-${max}`;
+};
+
 /**
  * 対戦結果画面。順位・持ち点・得点 (ウマ + 返し反映) を表示する。
  */
-export const ResultScreen = ({ board, onBackToSetup }: Props) => {
-  const ranked = rankPlayers(board);
+export const ResultScreen = ({ board, config, onBackToSetup }: Props) => {
+  const ranked = rankPlayers(board, config);
 
   return (
     <div className="flex h-full flex-col items-center justify-center bg-neutral-950 p-6">
@@ -110,7 +122,7 @@ export const ResultScreen = ({ board, onBackToSetup }: Props) => {
       </div>
 
       <p className="mt-6 text-lg text-neutral-500">
-        10-30 / 30,000点返し
+        {formatUmaLabel(config)} / {config.returnPoint.toLocaleString('en-US')}点返し
       </p>
 
       <button
