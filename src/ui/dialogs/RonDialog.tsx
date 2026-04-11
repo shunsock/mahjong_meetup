@@ -1,14 +1,10 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import type { Player, PlayerId } from '../../domain/player';
-import {
-  KO_POINT_PRESETS,
-  OYA_POINT_PRESETS,
-  type Points,
-  type ScoreMovement,
-} from '../../domain/movement';
+import type { ScoreMovement } from '../../domain/movement';
+import { calcKoRon, calcOyaRon } from '../../domain/score-calculation';
 import { Modal } from './Modal';
 import { PlayerSelector } from '../controls/PlayerSelector';
-import { ScoreInput } from '../controls/ScoreInput';
+import { HanFuInput } from '../controls/HanFuInput';
 import { CounterInput } from '../controls/CounterInput';
 import { NaturalNumber } from '../../domain/natural-number';
 
@@ -22,26 +18,28 @@ type Mode = 'ko' | 'oya';
 
 /**
  * ロン入力ダイアログ。
- * 和了者・放銃者・点数 (和了者が子/親かでプリセット切替) を入力する。
- * このアプリは親情報を持たないので、子/親はプリセットの数値を
- * 切り替えるための UI 上の便宜的な選択肢として扱う。
+ * 和了者・放銃者・翻/符 (子/親切替) を入力し、点数を自動算出する。
  */
 export const RonDialog = ({ players, onConfirm, onCancel }: Props) => {
   const [winner, setWinner] = useState<PlayerId | null>(null);
   const [loser, setLoser] = useState<PlayerId | null>(null);
   const [mode, setMode] = useState<Mode>('ko');
-  const [amount, setAmount] = useState<Points | null>(null);
+  const [han, setHan] = useState<number | null>(null);
+  const [fu, setFu] = useState<number | null>(null);
   const [honba, setHonba] = useState(NaturalNumber.of(0));
 
+  const score = useMemo(() => {
+    if (han === null || fu === null) return null;
+    return mode === 'ko' ? calcKoRon(han, fu) : calcOyaRon(han, fu);
+  }, [han, fu, mode]);
+
   const canConfirm =
-    winner !== null && loser !== null && amount !== null && amount > 0;
+    winner !== null && loser !== null && score !== null;
 
   const handleConfirm = () => {
-    if (!canConfirm) return;
-    onConfirm({ kind: 'ron', winner, loser, amount, honba });
+    if (!canConfirm || score === null) return;
+    onConfirm({ kind: 'ron', winner, loser, amount: score.total, honba });
   };
-
-  const presets = mode === 'ko' ? KO_POINT_PRESETS : OYA_POINT_PRESETS;
 
   return (
     <Modal
@@ -81,11 +79,12 @@ export const RonDialog = ({ players, onConfirm, onCancel }: Props) => {
           </div>
         </div>
 
-        <ScoreInput
-          label="点数"
-          presets={presets}
-          value={amount}
-          onSelect={setAmount}
+        <HanFuInput
+          han={han}
+          fu={fu}
+          onHanSelect={setHan}
+          onFuSelect={setFu}
+          calculatedScore={score?.total ?? null}
         />
 
         <CounterInput

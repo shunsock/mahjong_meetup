@@ -1,14 +1,10 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import type { Player, PlayerId } from '../../domain/player';
-import {
-  KO_POINT_PRESETS,
-  OYA_POINT_PRESETS,
-  type Points,
-  type ScoreMovement,
-} from '../../domain/movement';
+import type { ScoreMovement } from '../../domain/movement';
+import { calcKoTsumo, calcOyaTsumo } from '../../domain/score-calculation';
 import { Modal } from './Modal';
 import { PlayerSelector } from '../controls/PlayerSelector';
-import { ScoreInput } from '../controls/ScoreInput';
+import { HanFuInput } from '../controls/HanFuInput';
 import { CounterInput } from '../controls/CounterInput';
 import { NaturalNumber } from '../../domain/natural-number';
 
@@ -22,6 +18,7 @@ type Mode = 'ko' | 'oya';
 
 /**
  * ツモ入力ダイアログ。
+ * 翻/符から点数を自動算出する。
  * 子ツモの場合は「和了者」と「親」を別々に選ぶ必要がある。
  * 親ツモの場合は和了者 = 親なので親選択 UI は出さない。
  */
@@ -29,26 +26,29 @@ export const TsumoDialog = ({ players, onConfirm, onCancel }: Props) => {
   const [mode, setMode] = useState<Mode>('ko');
   const [winner, setWinner] = useState<PlayerId | null>(null);
   const [dealer, setDealer] = useState<PlayerId | null>(null);
-  const [total, setTotal] = useState<Points | null>(null);
+  const [han, setHan] = useState<number | null>(null);
+  const [fu, setFu] = useState<number | null>(null);
   const [honba, setHonba] = useState(NaturalNumber.of(0));
+
+  const score = useMemo(() => {
+    if (han === null || fu === null) return null;
+    return mode === 'ko' ? calcKoTsumo(han, fu) : calcOyaTsumo(han, fu);
+  }, [han, fu, mode]);
 
   const canConfirm =
     winner !== null &&
-    total !== null &&
-    total > 0 &&
+    score !== null &&
     (mode === 'oya' || dealer !== null);
 
   const handleConfirm = () => {
-    if (!canConfirm) return;
+    if (!canConfirm || score === null) return;
     if (mode === 'oya') {
-      onConfirm({ kind: 'tsumo-oya', winner, total, honba });
+      onConfirm({ kind: 'tsumo-oya', winner, total: score.total, honba });
     } else {
       if (dealer === null) return;
-      onConfirm({ kind: 'tsumo-ko', winner, dealer, total, honba });
+      onConfirm({ kind: 'tsumo-ko', winner, dealer, total: score.total, honba });
     }
   };
-
-  const presets = mode === 'ko' ? KO_POINT_PRESETS : OYA_POINT_PRESETS;
 
   return (
     <Modal
@@ -66,7 +66,8 @@ export const TsumoDialog = ({ players, onConfirm, onCancel }: Props) => {
               active={mode === 'ko'}
               onClick={() => {
                 setMode('ko');
-                setTotal(null);
+                setHan(null);
+                setFu(null);
               }}
             />
             <ModeButton
@@ -75,7 +76,8 @@ export const TsumoDialog = ({ players, onConfirm, onCancel }: Props) => {
               onClick={() => {
                 setMode('oya');
                 setDealer(null);
-                setTotal(null);
+                setHan(null);
+                setFu(null);
               }}
             />
           </div>
@@ -98,11 +100,12 @@ export const TsumoDialog = ({ players, onConfirm, onCancel }: Props) => {
           />
         )}
 
-        <ScoreInput
-          label="合計点 (自動分配されます)"
-          presets={presets}
-          value={total}
-          onSelect={setTotal}
+        <HanFuInput
+          han={han}
+          fu={fu}
+          onHanSelect={setHan}
+          onFuSelect={setFu}
+          calculatedScore={score?.total ?? null}
         />
 
         <CounterInput
