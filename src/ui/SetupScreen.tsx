@@ -76,10 +76,10 @@ export const SetupScreen = ({ onStart }: Props) => {
         </div>
 
         <div className="space-y-4 rounded-2xl bg-neutral-900 p-6 ring-1 ring-neutral-800">
-          <h2 className="text-2xl font-bold text-neutral-300">ウマ・オカ設定</h2>
+          <h2 className="text-2xl font-bold text-neutral-300">順位点・返し点設定</h2>
 
           <div className="space-y-2">
-            <span className="text-xl text-neutral-400">ウマ</span>
+            <span className="text-xl text-neutral-400">順位点</span>
             <div className="flex gap-3">
               {UMA_PRESETS.map((preset, index) => (
                 <button
@@ -99,7 +99,7 @@ export const SetupScreen = ({ onStart }: Props) => {
           </div>
 
           <div className="space-y-2">
-            <span className="text-xl text-neutral-400">オカ (返し点)</span>
+            <span className="text-xl text-neutral-400">返し点</span>
             <div className="flex gap-3">
               {RETURN_POINT_OPTIONS.map((point) => (
                 <button
