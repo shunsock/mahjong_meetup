@@ -1,11 +1,16 @@
 import type { Player } from '../domain/player';
 import type { Points } from '../domain/movement';
 
+type DeltaEntry = Readonly<{
+  name: string;
+  delta: number;
+}>;
+
 type Props = Readonly<{
   player: Player;
   score: Points;
-  rank: number; // 1〜4
-  delta: Points; // トップとの差 (トップは 0、他はマイナス値)
+  rank: number;
+  deltas: ReadonlyArray<DeltaEntry>;
 }>;
 
 const rankColor = (rank: number): string => {
@@ -21,19 +26,25 @@ const rankColor = (rank: number): string => {
   }
 };
 
+const deltaColor = (delta: number): string => {
+  if (delta > 0) return 'text-emerald-400';
+  if (delta < 0) return 'text-red-400';
+  return 'text-neutral-500';
+};
+
 const formatScore = (score: Points): string =>
   score.toLocaleString('en-US');
 
-const formatDelta = (delta: Points): string => {
+const formatDelta = (delta: number): string => {
   if (delta === 0) return '±0';
   const sign = delta > 0 ? '+' : '';
   return `${sign}${delta.toLocaleString('en-US')}`;
 };
 
 /**
- * 1 プレイヤー分のカード。大画面で見やすいよう点数を巨大に表示する。
+ * 1 プレイヤー分のカード。点数と他全員との点差を表示する。
  */
-export const PlayerCard = ({ player, score, rank, delta }: Props) => (
+export const PlayerCard = ({ player, score, rank, deltas }: Props) => (
   <div className="flex h-full min-w-0 flex-1 flex-col items-center justify-center rounded-2xl bg-neutral-900 p-6 ring-1 ring-neutral-800">
     <div className={`text-3xl font-bold ${rankColor(rank)}`}>
       {rank}位
@@ -48,8 +59,18 @@ export const PlayerCard = ({ player, score, rank, delta }: Props) => (
     >
       {formatScore(score)}
     </div>
-    <div className="mt-2 font-mono text-2xl text-neutral-400 tabular-nums">
-      {formatDelta(delta)}
+    <div className="mt-4 w-full space-y-1">
+      {deltas.map((entry) => (
+        <div
+          key={entry.name}
+          className="flex justify-between font-mono text-lg tabular-nums"
+        >
+          <span className="truncate text-neutral-400">{entry.name}</span>
+          <span className={deltaColor(entry.delta)}>
+            {formatDelta(entry.delta)}
+          </span>
+        </div>
+      ))}
     </div>
   </div>
 );

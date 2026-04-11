@@ -17,16 +17,21 @@ type Props = Readonly<{
 
 type DialogKind = 'ron' | 'tsumo' | 'ryukyoku' | 'riichi' | 'reset' | null;
 
+type DeltaEntry = Readonly<{
+  name: string;
+  delta: number;
+}>;
+
 type RankedPlayer = Readonly<{
   player: Player;
   score: number;
   rank: number;
-  delta: number;
+  deltas: ReadonlyArray<DeltaEntry>;
 }>;
 
 /**
  * 持ち点で降順ソートし、同点は元の並び順を保ったまま順位を付与する。
- * 点差はトップを基準にした相対値 (トップは 0、他はマイナス)。
+ * 各プレイヤーに対して他全員との点差を順位順で算出する。
  */
 const rankPlayers = (board: Scoreboard): ReadonlyArray<RankedPlayer> => {
   const withScores = board.players.map((player) => ({
@@ -34,12 +39,16 @@ const rankPlayers = (board: Scoreboard): ReadonlyArray<RankedPlayer> => {
     score: board.scores[player.id],
   }));
   const sorted = [...withScores].sort((a, b) => b.score - a.score);
-  const topScore = sorted[0]?.score ?? 0;
   return sorted.map((entry, index) => ({
     player: entry.player,
     score: entry.score,
     rank: index + 1,
-    delta: entry.score - topScore,
+    deltas: sorted
+      .filter((other) => other.player.id !== entry.player.id)
+      .map((other) => ({
+        name: other.player.name,
+        delta: entry.score - other.score,
+      })),
   }));
 };
 
@@ -69,7 +78,7 @@ export const Dashboard = ({ players, onReset }: Props) => {
             player={entry.player}
             score={entry.score}
             rank={entry.rank}
-            delta={entry.delta}
+            deltas={entry.deltas}
           />
         ))}
       </div>
