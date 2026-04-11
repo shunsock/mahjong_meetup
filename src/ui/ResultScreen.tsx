@@ -34,28 +34,18 @@ const rankPlayers = (board: Scoreboard): ReadonlyArray<RankedResult> => {
 
 const rankLabel = (rank: number): string => {
   switch (rank) {
-    case 1: return '1st';
-    case 2: return '2nd';
-    case 3: return '3rd';
-    default: return '4th';
+    case 1: return '一位';
+    case 2: return '二位';
+    case 3: return '三位';
+    default: return '四位';
   }
 };
 
-const rankAccentColor = (rank: number): string => {
+const rankColor = (rank: number): string => {
   switch (rank) {
     case 1: return 'text-yellow-400';
-    case 2: return 'text-neutral-300';
-    case 3: return 'text-amber-600';
-    default: return 'text-neutral-500';
-  }
-};
-
-const rankBorderColor = (rank: number): string => {
-  switch (rank) {
-    case 1: return 'ring-yellow-400/40';
-    case 2: return 'ring-neutral-400/30';
-    case 3: return 'ring-amber-600/30';
-    default: return 'ring-neutral-700';
+    case 4: return 'text-red-400';
+    default: return 'text-neutral-400';
   }
 };
 
@@ -89,14 +79,14 @@ export const ResultScreen = ({ board, onBackToSetup }: Props) => {
         {ranked.map((entry) => (
           <div
             key={entry.player.id}
-            className={`flex items-center rounded-2xl bg-neutral-900 px-8 py-6 ring-1 ${rankBorderColor(entry.rank)}`}
+            className="flex items-center rounded-2xl bg-neutral-900 px-8 py-6 ring-1 ring-neutral-800"
           >
-            <div className={`w-24 text-center font-serif text-4xl font-bold ${rankAccentColor(entry.rank)}`}>
+            <div className={`w-24 text-center font-serif text-4xl font-bold ${rankColor(entry.rank)}`}>
               {rankLabel(entry.rank)}
             </div>
 
             <div className="ml-6 min-w-0 flex-1">
-              <div className="truncate text-3xl font-bold text-neutral-100">
+              <div className="truncate text-3xl text-neutral-300">
                 {entry.player.name}
               </div>
             </div>
