@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
+import { PointStickDivider } from './PointStickDivider';
 import { PLAYER_IDS, type Player, type PlayerId } from '../domain/player';
 import {
   DEFAULT_CONFIG,
@@ -56,6 +57,8 @@ export const SetupScreen = ({ onStart }: Props) => {
         <p className="text-center text-2xl text-neutral-400">
           プレイヤー名を入力してください
         </p>
+
+        <PointStickDivider />
 
         <div className="grid grid-cols-2 gap-6">
           {PLAYER_IDS.map((id, index) => (
@@ -139,6 +142,8 @@ export const SetupScreen = ({ onStart }: Props) => {
             </div>
           )}
         </div>
+
+        <PointStickDivider />
 
         <button
           type="button"

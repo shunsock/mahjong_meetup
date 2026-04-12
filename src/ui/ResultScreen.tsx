@@ -1,4 +1,5 @@
 import { ChevronsUp, ChevronsDown } from 'lucide-react';
+import { PointStickDivider } from './PointStickDivider';
 import type { Scoreboard } from '../domain/scoreboard';
 import type { Player } from '../domain/player';
 import type { Points } from '../domain/movement';
@@ -95,9 +96,13 @@ export const ResultScreen = ({ board, config, onBackToSetup }: Props) => {
 
   return (
     <div className="flex h-full flex-col items-center justify-center bg-neutral-950 p-6">
-      <h1 className="mb-10 text-5xl font-bold text-neutral-100">
+      <h1 className="mb-4 text-5xl font-bold text-neutral-100">
         対戦結果
       </h1>
+
+      <div className="mb-6 w-full max-w-3xl">
+        <PointStickDivider />
+      </div>
 
       <div className="w-full max-w-3xl space-y-4">
         {ranked.map((entry) => (
@@ -136,7 +141,11 @@ export const ResultScreen = ({ board, config, onBackToSetup }: Props) => {
         ))}
       </div>
 
-      <p className="mt-6 text-lg text-neutral-500">
+      <div className="mt-6 w-full max-w-3xl">
+        <PointStickDivider />
+      </div>
+
+      <p className="mt-2 text-lg text-neutral-500">
         {formatUmaLabel(config)} / {config.returnPoint.toLocaleString('en-US')}点返し
       </p>
 
