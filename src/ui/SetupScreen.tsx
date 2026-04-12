@@ -51,8 +51,8 @@ export const SetupScreen = ({ onStart }: Props) => {
   return (
     <div className="flex h-full items-center justify-center bg-neutral-950 p-8">
       <div className="w-full max-w-3xl space-y-8">
-        <h1 className="text-center text-6xl font-bold text-neutral-100">
-          麻雀ダッシュボード
+        <h1 className="text-center font-serif text-6xl font-bold text-neutral-100">
+          麻雀集会
         </h1>
         <p className="text-center text-2xl text-neutral-400">
           プレイヤー名を入力してください
