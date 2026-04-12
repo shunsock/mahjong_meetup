@@ -1,3 +1,4 @@
+import { ChevronsUp, ChevronsDown } from 'lucide-react';
 import type { Scoreboard } from '../domain/scoreboard';
 import type { Player } from '../domain/player';
 import type { Points } from '../domain/movement';
@@ -53,13 +54,24 @@ const rankColor = (rank: number): string => {
   }
 };
 
+const rankRingColor = (rank: number): string => {
+  switch (rank) {
+    case 1: return 'ring-yellow-400';
+    default: return 'ring-neutral-800';
+  }
+};
+
 const formatScore = (score: Points): string =>
   score.toLocaleString('en-US');
 
-const formatFinalScore = (finalScore: number): string => {
-  const sign = finalScore > 0 ? '+' : '';
-  return `${sign}${finalScore.toFixed(1)}`;
+const finalScoreSign = (finalScore: number): string => {
+  if (finalScore > 0) return '+';
+  if (finalScore < 0) return '-';
+  return '';
 };
+
+const formatFinalScoreValue = (finalScore: number): string =>
+  Math.abs(finalScore).toFixed(1);
 
 const finalScoreColor = (finalScore: number): string => {
   if (finalScore > 0) return 'text-emerald-400';
@@ -91,7 +103,7 @@ export const ResultScreen = ({ board, config, onBackToSetup }: Props) => {
         {ranked.map((entry) => (
           <div
             key={entry.player.id}
-            className="flex items-center rounded-2xl bg-neutral-900 px-8 py-6 ring-1 ring-neutral-800"
+            className={`flex items-center rounded-2xl bg-neutral-900 px-8 py-6 ring-1 ${rankRingColor(entry.rank)}`}
           >
             <div className={`w-24 text-center font-serif text-4xl font-bold ${rankColor(entry.rank)}`}>
               {rankLabel(entry.rank)}
@@ -103,7 +115,7 @@ export const ResultScreen = ({ board, config, onBackToSetup }: Props) => {
               </div>
             </div>
 
-            <div className="ml-4 text-right">
+            <div className="ml-4">
               <div
                 className={`font-mono text-4xl font-bold tabular-nums ${
                   entry.score < 0 ? 'text-red-400' : 'text-neutral-50'
@@ -112,9 +124,12 @@ export const ResultScreen = ({ board, config, onBackToSetup }: Props) => {
                 {formatScore(entry.score)}
               </div>
               <div
-                className={`mt-1 font-mono text-2xl font-bold tabular-nums ${finalScoreColor(entry.finalScore)}`}
+                className={`mt-1 flex items-center gap-1 font-mono text-2xl font-bold tabular-nums ${finalScoreColor(entry.finalScore)}`}
               >
-                {formatFinalScore(entry.finalScore)}
+                {entry.finalScore > 0 && <ChevronsUp size={24} />}
+                {entry.finalScore < 0 && <ChevronsDown size={24} />}
+                <span className="text-lg">{finalScoreSign(entry.finalScore)}</span>
+                {formatFinalScoreValue(entry.finalScore)}
               </div>
             </div>
           </div>
