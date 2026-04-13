@@ -43,7 +43,8 @@ export const SetupScreen = ({ onStart }: Props) => {
     }));
     const config: FinalScoreConfig = {
       returnPoint,
-      placementBonus: UMA_PRESETS[umaIndex].bonus,
+      // umaIndex は UMA_PRESETS の有効範囲内 (findIndex で初期化、select で更新)
+      placementBonus: UMA_PRESETS[umaIndex]!.bonus,
     };
     onStart(players, config);
   };
@@ -89,7 +90,7 @@ export const SetupScreen = ({ onStart }: Props) => {
             <h2 className="text-2xl font-bold text-neutral-300">
               順位点・返し点設定
               <span className="ml-3 text-lg font-normal text-neutral-500">
-                {UMA_PRESETS[umaIndex].label} / {returnPoint.toLocaleString('en-US')}点返し
+                {UMA_PRESETS[umaIndex]!.label} / {returnPoint.toLocaleString('en-US')}点返し
               </span>
             </h2>
             <ChevronDown

@@ -39,6 +39,6 @@ export const calcFinalScore = (
   config: FinalScoreConfig,
 ): number => {
   const rawPoint = (score - config.returnPoint) / 1000;
-  const placement = config.placementBonus[rank - 1];
+  const placement = config.placementBonus[rank - 1] ?? 0;
   return rawPoint + placement;
 };
