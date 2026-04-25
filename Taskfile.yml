@@ -1,0 +1,40 @@
+version: "3"
+
+tasks:
+  dev:
+    desc: Start Vite development server
+    cmd: pnpm dev
+
+  build:
+    desc: TypeScript compile and Vite build
+    deps: [typecheck]
+    cmd: pnpm build
+
+  preview:
+    desc: Preview built app
+    cmd: pnpm preview
+
+  typecheck:
+    desc: Run TypeScript type checking
+    cmd: pnpm typecheck
+
+  test:
+    desc: Run tests once
+    cmd: pnpm test
+
+  test:watch:
+    desc: Run tests in watch mode
+    cmd: pnpm test:watch
+
+  check:
+    desc: Run typecheck and tests
+    deps: [typecheck, test]
+
+  install:
+    desc: Install dependencies
+    cmd: pnpm install
+    sources:
+      - package.json
+      - pnpm-lock.yaml
+    generates:
+      - node_modules/**/*
