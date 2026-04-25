@@ -13,10 +13,11 @@
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
             nodejs_22
+            pnpm
           ];
 
           shellHook = ''
-            echo "Mahjong Dashboard dev shell ready: $(node --version) / $(npm --version)"
+            echo "Mahjong Dashboard dev shell ready: node $(node --version) / pnpm $(pnpm --version)"
           '';
         };
       });
