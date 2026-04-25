@@ -1,0 +1,40 @@
+version: "3"
+
+tasks:
+  dev:
+    desc: Start Vite development server
+    cmd: nix develop -c pnpm run dev
+
+  build:
+    desc: TypeScript compile and Vite build
+    deps: [typecheck]
+    cmd: nix develop -c pnpm run build
+
+  preview:
+    desc: Preview built app
+    cmd: nix develop -c pnpm run preview
+
+  typecheck:
+    desc: Run TypeScript type checking
+    cmd: nix develop -c pnpm run typecheck
+
+  test:
+    desc: Run tests once
+    cmd: nix develop -c pnpm run test
+
+  test:watch:
+    desc: Run tests in watch mode
+    cmd: nix develop -c pnpm run test:watch
+
+  check:
+    desc: Run typecheck and tests
+    deps: [typecheck, test]
+
+  install:
+    desc: Install dependencies
+    cmd: nix develop -c pnpm install
+    sources:
+      - package.json
+      - pnpm-lock.yaml
+    generates:
+      - node_modules/**/*

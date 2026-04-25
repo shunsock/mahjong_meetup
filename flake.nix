@@ -14,6 +14,7 @@
           buildInputs = with pkgs; [
             nodejs_22
             pnpm
+            go-task
           ];
 
           shellHook = ''
