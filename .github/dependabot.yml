@@ -6,6 +6,10 @@ updates:
       interval: weekly
       day: monday
       timezone: Asia/Tokyo
+    # リリース直後の versions を避ける (zizmor: insufficient cooldown 対策。
+    # supply-chain 攻撃の多くは公開直後に検出・取り下げられるため数日置く)。
+    cooldown:
+      default-days: 7
 
   - package-ecosystem: npm
     directory: /
@@ -13,6 +17,8 @@ updates:
       interval: weekly
       day: monday
       timezone: Asia/Tokyo
+    cooldown:
+      default-days: 7
     ignore:
       - dependency-name: "*"
         update-types:
