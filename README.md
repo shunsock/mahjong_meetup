@@ -31,7 +31,7 @@
 
 | 項目 | 選定 |
 |---|---|
-| 言語 | TypeScript 6 |
+| 言語 | TypeScript 7 |
 | フレームワーク | React 19 |
 | ビルドツール | Vite 8 |
 | スタイリング | Tailwind CSS 4 |
