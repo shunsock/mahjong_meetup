@@ -5,7 +5,8 @@
 ```
 src/
 ├── domain/          # ドメインロジック (純粋関数・値オブジェクト)
-├── state/           # アプリケーション状態管理 (React hooks)
+├── usecase/         # アプリケーションのビジネスフローと外部依存の抽象 (Port)
+├── adapter/         # usecase の Port の実装 (React hooks 等)
 ├── presentation/    # UI コンポーネント
 │   ├── controls/    # 入力系コンポーネント
 │   └── dialogs/     # ダイアログコンポーネント
@@ -18,10 +19,11 @@ src/
 | レイヤー | 責務 | 依存先 |
 |---------|------|--------|
 | `domain` | 点数計算・スコアボード等のビジネスロジック。フレームワーク非依存 | なし |
-| `state` | `domain` を使ってアプリの状態遷移を管理する React hooks | `domain` |
-| `presentation` | 画面表示とユーザー操作のハンドリング | `domain`, `state` |
+| `usecase` | `domain` を使ったアプリケーションのビジネスフロー (action) と、状態操作等の外部依存を抽象化する Port | `domain` |
+| `adapter` | `usecase` の Port を実装する具体的な手段 (React hooks 等) | `domain`, `usecase` |
+| `presentation` | 画面表示とユーザー操作のハンドリング | `domain`, `usecase`, `adapter` |
 
-依存方向は `presentation` → `state` → `domain` の一方向です。`domain` は他のレイヤーに依存しません。
+依存方向は `presentation` → `usecase` / `adapter` → `domain` の一方向です。`domain` は他のレイヤーに依存しません。`adapter` は `usecase` が定義する Port を実装する形で依存します。
 
 ## コマンド一覧
 
@@ -64,7 +66,7 @@ nix develop -c pnpm run vitest run src/domain/scoreboard.test.ts
 - **不変データ**: ドメインオブジェクトは immutable。状態の変更は新しいオブジェクトを生成して行う
 - **純粋関数**: `domain` レイヤーは副作用を持たない純粋関数で構成する
 - **型安全**: `NaturalNumber` 等の値オブジェクトで不正な状態を型レベルで防止する
-- **一方向依存**: `presentation` → `state` → `domain` の依存方向を守る
+- **一方向依存**: `presentation` → `usecase` / `adapter` → `domain` の依存方向を守る
 
 ## CI
 
