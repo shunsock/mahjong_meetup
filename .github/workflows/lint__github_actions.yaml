@@ -21,13 +21,13 @@ permissions:
 jobs:
   actionlint:
     name: actionlint
-    runs-on: ubuntu-24.04
+    runs-on: ubicloud-standard-2
     timeout-minutes: 5
     permissions:
       contents: read
     steps:
       - name: Checkout repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
 
@@ -43,13 +43,13 @@ jobs:
 
   ghalint:
     name: ghalint
-    runs-on: ubuntu-24.04
+    runs-on: ubicloud-standard-2
     timeout-minutes: 5
     permissions:
       contents: read
     steps:
       - name: Checkout repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
 
@@ -63,13 +63,13 @@ jobs:
 
   zizmor:
     name: zizmor
-    runs-on: ubuntu-24.04
+    runs-on: ubicloud-standard-2
     timeout-minutes: 5
     permissions:
       contents: read
     steps:
       - name: Checkout repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
 
@@ -78,7 +78,7 @@ jobs:
       # 使わない。advanced-security: false で annotation に fallback し (security-events 権限も
       # 不要)、online-audits: false で外部 API へ問い合わせず決定的に監査する。
       - name: Run zizmor
-        uses: zizmorcore/zizmor-action@3dc1ecc9bcb9e94e9b2c709687979e1298497054 # v0.6.2
+        uses: zizmorcore/zizmor-action@6fc4b006235f201fdab3722e17240ab420d580e5 # v0.6.1
         with:
           version: v1.25.2
           advanced-security: false
