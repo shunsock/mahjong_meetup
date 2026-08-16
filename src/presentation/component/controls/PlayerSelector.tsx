@@ -1,4 +1,4 @@
-import type { Player, PlayerId } from '../../domain/player';
+import type { Player, PlayerId } from '../../../domain/player';
 
 type Props = Readonly<{
   label: string;

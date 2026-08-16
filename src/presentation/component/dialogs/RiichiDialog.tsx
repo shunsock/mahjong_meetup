@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { Player, PlayerId } from '../../domain/player';
+import type { Player, PlayerId } from '../../../domain/player';
 import { Modal } from './Modal';
 
 type Props = Readonly<{

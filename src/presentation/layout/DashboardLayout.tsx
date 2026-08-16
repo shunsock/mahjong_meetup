@@ -7,10 +7,10 @@ import { ActionBar } from '../component/ActionBar';
 import { TopBarButton } from '../component/TopBarButton';
 import { RonDialog } from '../dialogs/RonDialog';
 import { TsumoDialog } from '../dialogs/TsumoDialog';
-import { RyukyokuDialog } from '../dialogs/RyukyokuDialog';
-import { RiichiDialog } from '../dialogs/RiichiDialog';
-import { ResetDialog } from '../dialogs/ResetDialog';
-import { EndMatchDialog } from '../dialogs/EndMatchDialog';
+import { RyukyokuDialog } from '../component/dialogs/RyukyokuDialog';
+import { RiichiDialog } from '../component/dialogs/RiichiDialog';
+import { ResetDialog } from '../component/dialogs/ResetDialog';
+import { EndMatchDialog } from '../component/dialogs/EndMatchDialog';
 
 export type DialogKind = 'ron' | 'tsumo' | 'ryukyoku' | 'riichi' | 'reset' | 'endMatch' | null;
 
