@@ -2,10 +2,10 @@ import { useState, useMemo } from 'react';
 import type { Player, PlayerId } from '../../domain/player';
 import type { ScoreMovement } from '../../domain/movement';
 import { calcKoTsumo, calcOyaTsumo } from '../../domain/score-calculation';
-import { Modal } from './Modal';
-import { PlayerSelector } from '../controls/PlayerSelector';
-import { HanFuInput } from '../controls/HanFuInput';
-import { CounterInput } from '../controls/CounterInput';
+import { Modal } from '../component/dialogs/Modal';
+import { PlayerSelector } from '../component/controls/PlayerSelector';
+import { HanFuInput } from '../component/controls/HanFuInput';
+import { CounterInput } from '../component/controls/CounterInput';
 import { NaturalNumber } from '../../domain/natural-number';
 
 type Props = Readonly<{
