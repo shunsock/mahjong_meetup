@@ -2,17 +2,20 @@ import type { ComponentProps } from 'react';
 import { RotateCcw, LogOut } from 'lucide-react';
 import type { Player, PlayerId } from '../../domain/player';
 import type { ScoreMovement } from '../../domain/movement';
+import type { NaturalNumber } from '../../domain/natural-number';
 import { PlayerCard } from '../component/PlayerCard';
 import { ActionBar } from '../component/ActionBar';
 import { TopBarButton } from '../component/TopBarButton';
-import { RonDialog } from '../dialogs/RonDialog';
-import { TsumoDialog } from '../dialogs/TsumoDialog';
+import { RonDialog } from '../component/dialogs/RonDialog';
+import { TsumoDialog } from '../component/dialogs/TsumoDialog';
 import { RyukyokuDialog } from '../component/dialogs/RyukyokuDialog';
 import { RiichiDialog } from '../component/dialogs/RiichiDialog';
 import { ResetDialog } from '../component/dialogs/ResetDialog';
 import { EndMatchDialog } from '../component/dialogs/EndMatchDialog';
 
 export type DialogKind = 'ron' | 'tsumo' | 'ryukyoku' | 'riichi' | 'reset' | 'endMatch' | null;
+
+type WinnerMode = 'ko' | 'oya';
 
 type Props = Readonly<{
   players: ReadonlyArray<Player>;
@@ -24,6 +27,11 @@ type Props = Readonly<{
   onUndo: () => void;
   onConfirmReset: () => void;
   onEndMatch: () => void;
+  onCalculateRonScore: (mode: WinnerMode, han: number | null, fu: number | null) => number | null;
+  onCalculateTsumoScore: (mode: WinnerMode, han: number | null, fu: number | null) => number | null;
+  onIncrementHonba: (current: NaturalNumber) => NaturalNumber;
+  onDecrementHonba: (current: NaturalNumber) => NaturalNumber;
+  onResetHonba: () => NaturalNumber;
 }>;
 
 /**
@@ -40,6 +48,11 @@ export const DashboardLayout = ({
   onUndo,
   onConfirmReset,
   onEndMatch,
+  onCalculateRonScore,
+  onCalculateTsumoScore,
+  onIncrementHonba,
+  onDecrementHonba,
+  onResetHonba,
 }: Props) => (
   <div className="flex h-full flex-col bg-neutral-950 p-6">
     <div className="flex justify-end gap-3">
@@ -83,6 +96,10 @@ export const DashboardLayout = ({
         players={players}
         onConfirm={onDispatch}
         onCancel={() => onOpenDialog(null)}
+        onCalculateScore={onCalculateRonScore}
+        onIncrementHonba={onIncrementHonba}
+        onDecrementHonba={onDecrementHonba}
+        onResetHonba={onResetHonba}
       />
     )}
     {dialog === 'tsumo' && (
@@ -90,6 +107,10 @@ export const DashboardLayout = ({
         players={players}
         onConfirm={onDispatch}
         onCancel={() => onOpenDialog(null)}
+        onCalculateScore={onCalculateTsumoScore}
+        onIncrementHonba={onIncrementHonba}
+        onDecrementHonba={onDecrementHonba}
+        onResetHonba={onResetHonba}
       />
     )}
     {dialog === 'ryukyoku' && (
