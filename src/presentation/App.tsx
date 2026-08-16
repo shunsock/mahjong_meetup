@@ -4,7 +4,7 @@ import type { Scoreboard } from '../domain/scoreboard';
 import type { FinalScoreConfig } from '../domain/final-score';
 import { SetupScreen } from './screen/SetupScreen';
 import { DashboardScreen } from './screen/DashboardScreen';
-import { ResultScreen } from './ResultScreen';
+import { ResultScreen } from './screen/ResultScreen';
 
 type AppState =
   | Readonly<{ kind: 'setup' }>
