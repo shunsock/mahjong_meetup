@@ -1,5 +1,5 @@
-import type { Player } from '../domain/player';
-import type { Points } from '../domain/movement';
+import type { Player } from '../../domain/player';
+import type { Points } from '../../domain/movement';
 
 type DeltaEntry = Readonly<{
   name: string;
