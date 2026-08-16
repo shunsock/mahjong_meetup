@@ -1,39 +1,51 @@
 import { useState, useMemo } from 'react';
-import type { Player, PlayerId } from '../../domain/player';
-import type { ScoreMovement } from '../../domain/movement';
-import { calcKoTsumo, calcOyaTsumo } from '../../domain/score-calculation';
-import { Modal } from '../component/dialogs/Modal';
-import { PlayerSelector } from '../component/controls/PlayerSelector';
-import { HanFuInput } from '../component/controls/HanFuInput';
-import { CounterInput } from '../component/controls/CounterInput';
-import { NaturalNumber } from '../../domain/natural-number';
+import type { Player, PlayerId } from '../../../domain/player';
+import type { ScoreMovement } from '../../../domain/movement';
+import type { NaturalNumber } from '../../../domain/natural-number';
+import { Modal } from './Modal';
+import { PlayerSelector } from '../controls/PlayerSelector';
+import { HanFuInput } from '../controls/HanFuInput';
+import { CounterInput } from '../controls/CounterInput';
+
+type Mode = 'ko' | 'oya';
 
 type Props = Readonly<{
   players: ReadonlyArray<Player>;
   onConfirm: (movement: ScoreMovement) => void;
   onCancel: () => void;
+  onCalculateScore: (mode: Mode, han: number | null, fu: number | null) => number | null;
+  onIncrementHonba: (current: NaturalNumber) => NaturalNumber;
+  onDecrementHonba: (current: NaturalNumber) => NaturalNumber;
+  onResetHonba: () => NaturalNumber;
 }>;
-
-type Mode = 'ko' | 'oya';
 
 /**
  * ツモ入力ダイアログ。
  * 翻/符から点数を自動算出する。
  * 子ツモの場合は「和了者」と「親」を別々に選ぶ必要がある。
  * 親ツモの場合は和了者 = 親なので親選択 UI は出さない。
+ * 点数算出・本場カウンタの操作は props 経由で usecase 層に委譲する。
  */
-export const TsumoDialog = ({ players, onConfirm, onCancel }: Props) => {
+export const TsumoDialog = ({
+  players,
+  onConfirm,
+  onCancel,
+  onCalculateScore,
+  onIncrementHonba,
+  onDecrementHonba,
+  onResetHonba,
+}: Props) => {
   const [mode, setMode] = useState<Mode>('ko');
   const [winner, setWinner] = useState<PlayerId | null>(null);
   const [dealer, setDealer] = useState<PlayerId | null>(null);
   const [han, setHan] = useState<number | null>(null);
   const [fu, setFu] = useState<number | null>(null);
-  const [honba, setHonba] = useState(NaturalNumber.of(0));
+  const [honba, setHonba] = useState<NaturalNumber>(onResetHonba);
 
-  const score = useMemo(() => {
-    if (han === null || fu === null) return null;
-    return mode === 'ko' ? calcKoTsumo(han, fu) : calcOyaTsumo(han, fu);
-  }, [han, fu, mode]);
+  const score = useMemo(
+    () => onCalculateScore(mode, han, fu),
+    [han, fu, mode, onCalculateScore],
+  );
 
   const canConfirm =
     winner !== null &&
@@ -43,10 +55,10 @@ export const TsumoDialog = ({ players, onConfirm, onCancel }: Props) => {
   const handleConfirm = () => {
     if (!canConfirm || score === null) return;
     if (mode === 'oya') {
-      onConfirm({ kind: 'tsumo-oya', winner, total: score.total, honba });
+      onConfirm({ kind: 'tsumo-oya', winner, total: score, honba });
     } else {
       if (dealer === null) return;
-      onConfirm({ kind: 'tsumo-ko', winner, dealer, total: score.total, honba });
+      onConfirm({ kind: 'tsumo-ko', winner, dealer, total: score, honba });
     }
   };
 
@@ -105,15 +117,15 @@ export const TsumoDialog = ({ players, onConfirm, onCancel }: Props) => {
           fu={fu}
           onHanSelect={setHan}
           onFuSelect={setFu}
-          calculatedScore={score?.total ?? null}
+          calculatedScore={score}
         />
 
         <CounterInput
           label="本場"
           value={honba}
-          onIncrement={() => setHonba(NaturalNumber.of(honba + 1))}
-          onDecrement={() => setHonba(NaturalNumber.of(Math.max(0, honba - 1)))}
-          onReset={() => setHonba(NaturalNumber.of(0))}
+          onIncrement={() => setHonba(onIncrementHonba(honba))}
+          onDecrement={() => setHonba(onDecrementHonba(honba))}
+          onReset={() => setHonba(onResetHonba())}
         />
       </div>
     </Modal>
