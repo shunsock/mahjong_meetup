@@ -4,7 +4,7 @@ import { RotateCcw, LogOut } from 'lucide-react';
 import type { Player, PlayerId } from '../domain/player';
 import type { Scoreboard } from '../domain/scoreboard';
 import type { ScoreMovement } from '../domain/movement';
-import { useGameState } from '../state/useGameState';
+import { useGameStateAdapter } from '../adapter/state/game-state-adapter';
 import { PlayerCard } from './PlayerCard';
 import { RonDialog } from './dialogs/RonDialog';
 import { TsumoDialog } from './dialogs/TsumoDialog';
@@ -57,7 +57,7 @@ const rankPlayers = (board: Scoreboard): ReadonlyArray<RankedPlayer> => {
 };
 
 export const Dashboard = ({ players, onReset, onEndMatch }: Props) => {
-  const { board, canUndo, dispatch, undo, reset } = useGameState(players);
+  const { board, canUndo, dispatch, undo, reset } = useGameStateAdapter(players);
   const [dialog, setDialog] = useState<DialogKind>(null);
 
   const ranked = rankPlayers(board);

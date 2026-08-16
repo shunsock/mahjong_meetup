@@ -1,5 +1,5 @@
 /**
- * ゲーム状態の管理 (useReducer による glue 層)。
+ * GameStatePort の useReducer 実装 (adapter)。
  *
  * 状態は { initial, history } の 2 つだけで、現在の Scoreboard は
  * replay によって derive される。
@@ -8,20 +8,21 @@
  */
 
 import { useMemo, useReducer } from 'react';
-import type { Player } from '../domain/player';
-import type { ScoreMovement } from '../domain/movement';
+import type { Player } from '../../domain/player';
+import type { ScoreMovement } from '../../domain/movement';
 import {
   createInitialScoreboard,
   replay,
   type Scoreboard,
-} from '../domain/scoreboard';
+} from '../../domain/scoreboard';
+import type { GameStatePort } from '../../usecase/game/port';
 
-export type GameState = Readonly<{
+type GameState = Readonly<{
   initial: Scoreboard;
   history: ReadonlyArray<ScoreMovement>;
 }>;
 
-export type GameAction =
+type GameAction =
   | Readonly<{ type: 'dispatch'; movement: ScoreMovement }>
   | Readonly<{ type: 'undo' }>
   | Readonly<{ type: 'reset'; players: ReadonlyArray<Player> }>;
@@ -41,17 +42,9 @@ const reducer = (state: GameState, action: GameAction): GameState => {
   }
 };
 
-export type UseGameStateResult = Readonly<{
-  board: Scoreboard;
-  canUndo: boolean;
-  dispatch: (movement: ScoreMovement) => void;
-  undo: () => void;
-  reset: (players: ReadonlyArray<Player>) => void;
-}>;
-
-export const useGameState = (
+export const useGameStateAdapter = (
   players: ReadonlyArray<Player>,
-): UseGameStateResult => {
+): GameStatePort => {
   const [state, dispatchAction] = useReducer(
     reducer,
     players,
