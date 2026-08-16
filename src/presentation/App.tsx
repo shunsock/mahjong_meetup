@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { Player } from '../domain/player';
 import type { Scoreboard } from '../domain/scoreboard';
 import type { FinalScoreConfig } from '../domain/final-score';
-import { SetupScreen } from './SetupScreen';
+import { SetupScreen } from './screen/SetupScreen';
 import { Dashboard } from './Dashboard';
 import { ResultScreen } from './ResultScreen';
 

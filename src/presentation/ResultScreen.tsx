@@ -1,5 +1,5 @@
 import { ChevronsUp, ChevronsDown } from 'lucide-react';
-import { PointStickDivider } from './PointStickDivider';
+import { PointStickDivider } from './component/PointStickDivider';
 import type { Scoreboard } from '../domain/scoreboard';
 import type { Player } from '../domain/player';
 import type { Points } from '../domain/movement';
