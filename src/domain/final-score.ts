@@ -22,10 +22,14 @@ export const DEFAULT_CONFIG: FinalScoreConfig = {
   placementBonus: [30, 10, -10, -30],
 };
 
+/** ウマのプリセット 1 件分の表示ラベルとボーナス配分。 */
+export type UmaPreset = Readonly<{
+  label: string;
+  bonus: readonly [number, number, number, number];
+}>;
+
 /** よく使われるウマのプリセット。ラベルは「小-大」形式。 */
-export const UMA_PRESETS: ReadonlyArray<
-  Readonly<{ label: string; bonus: readonly [number, number, number, number] }>
-> = [
+export const UMA_PRESETS: ReadonlyArray<UmaPreset> = [
   { label: '5-10', bonus: [10, 5, -5, -10] },
   { label: '10-20', bonus: [20, 10, -10, -20] },
   { label: '10-30', bonus: [30, 10, -10, -30] },
