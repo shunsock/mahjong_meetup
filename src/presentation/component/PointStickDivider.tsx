@@ -12,9 +12,7 @@ export const PointStickDivider = () => (
       fill="none"
       aria-hidden="true"
     >
-      {/* 棒の本体 */}
       <rect x="0" y="5" width="120" height="6" rx="3" fill="#d4d4d4" />
-      {/* 中央の赤丸 */}
       <circle cx="60" cy="8" r="2.5" fill="#ef4444" />
     </svg>
     <span className="h-px flex-1 bg-neutral-700" />
