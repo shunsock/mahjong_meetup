@@ -3,7 +3,7 @@ import type { Player } from '../domain/player';
 import type { Scoreboard } from '../domain/scoreboard';
 import type { FinalScoreConfig } from '../domain/final-score';
 import { SetupScreen } from './screen/SetupScreen';
-import { Dashboard } from './Dashboard';
+import { DashboardScreen } from './screen/DashboardScreen';
 import { ResultScreen } from './ResultScreen';
 
 type AppState =
@@ -30,7 +30,7 @@ export const App = () => {
       );
     case 'playing':
       return (
-        <Dashboard
+        <DashboardScreen
           players={state.players}
           onReset={() => setState({ kind: 'setup' })}
           onEndMatch={(board) =>
