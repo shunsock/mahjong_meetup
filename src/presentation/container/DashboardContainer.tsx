@@ -7,6 +7,13 @@ import { dispatchMovement } from '../../usecase/game/dispatch-movement';
 import { undoMovement } from '../../usecase/game/undo-movement';
 import { resetMatch } from '../../usecase/game/reset-match';
 import { rankStandings } from '../../usecase/game/rank-standings';
+import { calculateRonScore } from '../../usecase/game/calculate-ron-score';
+import { calculateTsumoScore } from '../../usecase/game/calculate-tsumo-score';
+import {
+  incrementHonba,
+  decrementHonba,
+  resetHonba,
+} from '../../usecase/game/adjust-honba';
 import { DashboardLayout } from '../layout/DashboardLayout';
 import type { DialogKind } from '../layout/DashboardLayout';
 
@@ -53,6 +60,15 @@ export const DashboardContainer = ({ players, onReset, onEndMatch }: Props) => {
       onUndo={() => undoMovement(port)}
       onConfirmReset={handleConfirmReset}
       onEndMatch={handleEndMatch}
+      onCalculateRonScore={(mode, han, fu) =>
+        calculateRonScore(mode, han, fu)?.total ?? null
+      }
+      onCalculateTsumoScore={(mode, han, fu) =>
+        calculateTsumoScore(mode, han, fu)?.total ?? null
+      }
+      onIncrementHonba={incrementHonba}
+      onDecrementHonba={decrementHonba}
+      onResetHonba={resetHonba}
     />
   );
 };

@@ -1,44 +1,56 @@
 import { useState, useMemo } from 'react';
-import type { Player, PlayerId } from '../../domain/player';
-import type { ScoreMovement } from '../../domain/movement';
-import { calcKoRon, calcOyaRon } from '../../domain/score-calculation';
-import { Modal } from '../component/dialogs/Modal';
-import { PlayerSelector } from '../component/controls/PlayerSelector';
-import { HanFuInput } from '../component/controls/HanFuInput';
-import { CounterInput } from '../component/controls/CounterInput';
-import { NaturalNumber } from '../../domain/natural-number';
+import type { Player, PlayerId } from '../../../domain/player';
+import type { ScoreMovement } from '../../../domain/movement';
+import type { NaturalNumber } from '../../../domain/natural-number';
+import { Modal } from './Modal';
+import { PlayerSelector } from '../controls/PlayerSelector';
+import { HanFuInput } from '../controls/HanFuInput';
+import { CounterInput } from '../controls/CounterInput';
+
+type Mode = 'ko' | 'oya';
 
 type Props = Readonly<{
   players: ReadonlyArray<Player>;
   onConfirm: (movement: ScoreMovement) => void;
   onCancel: () => void;
+  onCalculateScore: (mode: Mode, han: number | null, fu: number | null) => number | null;
+  onIncrementHonba: (current: NaturalNumber) => NaturalNumber;
+  onDecrementHonba: (current: NaturalNumber) => NaturalNumber;
+  onResetHonba: () => NaturalNumber;
 }>;
-
-type Mode = 'ko' | 'oya';
 
 /**
  * ロン入力ダイアログ。
  * 和了者・放銃者・翻/符 (子/親切替) を入力し、点数を自動算出する。
+ * 点数算出・本場カウンタの操作は props 経由で usecase 層に委譲する。
  */
-export const RonDialog = ({ players, onConfirm, onCancel }: Props) => {
+export const RonDialog = ({
+  players,
+  onConfirm,
+  onCancel,
+  onCalculateScore,
+  onIncrementHonba,
+  onDecrementHonba,
+  onResetHonba,
+}: Props) => {
   const [winner, setWinner] = useState<PlayerId | null>(null);
   const [loser, setLoser] = useState<PlayerId | null>(null);
   const [mode, setMode] = useState<Mode>('ko');
   const [han, setHan] = useState<number | null>(null);
   const [fu, setFu] = useState<number | null>(null);
-  const [honba, setHonba] = useState(NaturalNumber.of(0));
+  const [honba, setHonba] = useState<NaturalNumber>(onResetHonba);
 
-  const score = useMemo(() => {
-    if (han === null || fu === null) return null;
-    return mode === 'ko' ? calcKoRon(han, fu) : calcOyaRon(han, fu);
-  }, [han, fu, mode]);
+  const score = useMemo(
+    () => onCalculateScore(mode, han, fu),
+    [han, fu, mode, onCalculateScore],
+  );
 
   const canConfirm =
     winner !== null && loser !== null && score !== null;
 
   const handleConfirm = () => {
     if (!canConfirm || score === null) return;
-    onConfirm({ kind: 'ron', winner, loser, amount: score.total, honba });
+    onConfirm({ kind: 'ron', winner, loser, amount: score, honba });
   };
 
   return (
@@ -84,15 +96,15 @@ export const RonDialog = ({ players, onConfirm, onCancel }: Props) => {
           fu={fu}
           onHanSelect={setHan}
           onFuSelect={setFu}
-          calculatedScore={score?.total ?? null}
+          calculatedScore={score}
         />
 
         <CounterInput
           label="本場"
           value={honba}
-          onIncrement={() => setHonba(NaturalNumber.of(honba + 1))}
-          onDecrement={() => setHonba(NaturalNumber.of(Math.max(0, honba - 1)))}
-          onReset={() => setHonba(NaturalNumber.of(0))}
+          onIncrement={() => setHonba(onIncrementHonba(honba))}
+          onDecrement={() => setHonba(onDecrementHonba(honba))}
+          onReset={() => setHonba(onResetHonba())}
         />
       </div>
     </Modal>
