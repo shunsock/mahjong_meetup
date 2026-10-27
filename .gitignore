@@ -18,5 +18,5 @@ npm-debug.log*
 pnpm-debug.log*
 
 # Nix
-result
+/result
 .direnv
